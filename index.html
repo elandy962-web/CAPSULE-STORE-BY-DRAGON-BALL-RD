@@ -91,26 +91,6 @@ header{
   text-decoration:none;display:inline-block;transition:opacity .2s;
 }
 .btn-hero-primary:hover{opacity:.85;}
-.btn-hero-outline{
-  background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.25);
-  padding:13px 28px;font-size:12px;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
-  text-decoration:none;display:inline-block;transition:border-color .2s;
-}
-.btn-hero-outline:hover{border-color:#fff;}
-.hero-stars{display:flex;gap:10px;align-items:center;}
-.db-ball{
-  width:48px;height:48px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#FFD700,#FF6B00 60%,#cc2200);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:#fff;font-family:'Bebas Neue',cursive;
-  box-shadow:0 4px 16px rgba(255,107,0,.4);position:relative;letter-spacing:.5px;
-  flex-shrink:0;
-}
-.db-ball::after{
-  content:'';position:absolute;inset:3px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.3);
-}
 
 /* COLLECTION HEADER */
 .collection-header{padding:44px 5% 20px;position:relative;z-index:1;}
@@ -134,12 +114,6 @@ header{
 }
 .filter-btn:hover{border-color:var(--black);}
 .filter-btn.active{background:var(--black);color:#fff;border-color:var(--black);}
-.results-right{display:flex;align-items:center;gap:12px;}
-.count-label{font-size:12px;color:var(--gray);font-weight:500;}
-.sort-select{
-  border:1.5px solid var(--border);padding:7px 12px;font-size:12px;
-  font-family:'Inter',sans-serif;cursor:pointer;background:#fff;outline:none;
-}
 
 /* PRODUCTS */
 .products-section{padding:24px 5% 48px;position:relative;z-index:1;}
@@ -147,14 +121,13 @@ header{
 .product-card{cursor:pointer;position:relative;border:1px solid transparent;transition:border-color .2s;}
 .product-card:hover{border-color:var(--border);}
 
-/* ELIMINAR ARTÍCULO (SOLO SE MUESTRA EN MODO ADMIN SELECCIONADO) */
+/* ELIMINAR ARTÍCULO */
 .delete-btn{
   position:absolute;top:8px;right:8px;z-index:5;background:rgba(0,0,0,.75);
   color:#fff;border:none;width:28px;height:28px;border-radius:50%;
   font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;
   line-height:1;transition:background .2s;
 }
-/* Activar visibilidad de eliminación solo si la clase admin-active está en el body */
 body.admin-active .product-card:hover .delete-btn {
   display: flex;
 }
@@ -164,14 +137,11 @@ body.admin-active .product-card:hover .delete-btn {
   background:var(--light);aspect-ratio:1;overflow:hidden;
   display:flex;align-items:center;justify-content:center;position:relative;
 }
-.product-emoji-big{font-size:90px;user-select:none;transition:transform .3s;}
-.product-card:hover .product-emoji-big{transform:scale(1.08);}
 .product-overlay{
   position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;
   background:linear-gradient(transparent 60%,rgba(0,0,0,0));
   transition:background .3s;
 }
-.product-card:hover .product-overlay{background:linear-gradient(transparent 40%,rgba(0,0,0,.08));}
 .quick-add-btn{
   width:100%;background:var(--black);color:#fff;border:none;
   padding:11px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
@@ -211,9 +181,6 @@ body.admin-active .product-card:hover .delete-btn {
 }
 .carousel-prev{left:10px;} .carousel-next{right:10px;}
 .carousel-prev:hover,.carousel-next:hover{background:var(--orange);}
-.carousel-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
-.cdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;border:none;transition:background .2s;}
-.cdot.active{background:#fff;}
 .modal-thumbs{display:flex;gap:6px;padding:10px 28px 0;overflow-x:auto;}
 .modal-thumb{
   width:56px;height:56px;object-fit:cover;cursor:pointer;border:2px solid transparent;
@@ -249,7 +216,6 @@ body.admin-active .product-card:hover .delete-btn {
 .modal-price{
   font-size:22px;font-weight:300;color:#333;margin-bottom:20px;
 }
-.modal-desc{font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:24px;}
 .wha-btn{
   width:100%;background:#25D366;color:#fff;border:none;
   padding:16px;font-size:14px;font-weight:700;letter-spacing:1.5px;
@@ -258,7 +224,6 @@ body.admin-active .product-card:hover .delete-btn {
   transition:background .2s;text-decoration:none;
 }
 .wha-btn:hover{background:#1ebe5d;}
-.wha-icon{font-size:20px;}
 
 /* CART DRAWER */
 .cart-overlay-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;}
@@ -276,27 +241,9 @@ body.admin-active .product-card:hover .delete-btn {
 .cart-head h3{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:1px;}
 .cart-close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray);}
 .cart-body{flex:1;overflow-y:auto;padding:20px 24px;}
-.cart-empty-state{text-align:center;color:var(--gray);margin-top:80px;}
-.cart-empty-state span{font-size:48px;display:block;margin-bottom:10px;}
 .cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);}
-.ci-img{
-  width:60px;height:60px;background:var(--light);display:flex;
-  align-items:center;justify-content:center;font-size:30px;flex-shrink:0;
-}
-.ci-info{flex:1;}
-.ci-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
-.ci-price{font-size:12px;color:var(--gray);margin-bottom:8px;}
-.ci-qty{display:flex;align-items:center;gap:10px;}
-.q-btn{
-  width:24px;height:24px;border:1.5px solid var(--border);background:#fff;
-  cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
-  transition:border-color .15s;
-}
-.q-btn:hover{border-color:var(--black);}
-.rm-btn{margin-left:auto;background:none;border:none;color:var(--gray);cursor:pointer;font-size:11px;text-decoration:underline;}
 .cart-foot{padding:20px 24px;border-top:2px solid var(--black);}
 .cart-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:600;margin-bottom:5px;}
-.cart-note{font-size:11px;color:var(--gray);margin-bottom:18px;}
 .checkout-btn{
   width:100%;background:var(--black);color:#fff;border:none;padding:16px;
   font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
@@ -313,7 +260,7 @@ body.admin-active .product-card:hover .delete-btn {
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* BOTÓN DE ADMINISTRACIÓN TOTALMENTE DISCRETO A LA DERECHA */
+/* BOTÓN DE ADMINISTRACIÓN */
 .floating-admin-trigger{
   position:fixed;bottom:20px;right:20px;z-index:999;
   background:rgba(10,10,10,0.4);color:#fff;border:none;
@@ -321,11 +268,9 @@ body.admin-active .product-card:hover .delete-btn {
   display:flex;align-items:center;justify-content:center;font-size:14px;
   transition:all .2s;
 }
-.floating-admin-trigger:hover{
-  background:var(--black);transform:scale(1.05);
-}
+.floating-admin-trigger:hover{background:var(--black);transform:scale(1.05);}
 
-/* ADMIN PANEL (OCULTO POR DEFECTO HASTA ENTRAR CON CLAVE) */
+/* ADMIN PANEL */
 .admin-section{
   display:none;margin-top:60px;border-top:3px solid var(--black);background:#0a0a0a;
   padding:40px 5%;position:relative;z-index:1;
@@ -348,7 +293,23 @@ body.admin-active .product-card:hover .delete-btn {
   transition:border-color .15s;
 }
 .admin-field input:focus, .admin-field select:focus{border-color:var(--orange);}
-.admin-field select option{background:#1a1a1a;color:#fff;}
+
+/* DROPZONE */
+.dropzone{
+  border:2px dashed #333;background:#111;padding:24px;text-align:center;color:var(--gray);
+  cursor:pointer;transition:all .2s;margin-bottom:16px;position:relative;
+}
+.dropzone:hover, .dropzone.dragover{border-color:var(--orange);background:#161616;color:#fff;}
+.dropzone input{display:none;}
+.dropzone p{font-size:12px;margin-top:4px;}
+.photo-preview-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.preview-item{position:relative;width:70px;height:70px;background:#222;border:1px solid #333;}
+.preview-item img{width:100%;height:100%;object-fit:cover;}
+.preview-loading{
+  position:absolute;inset:0;background:rgba(0,0,0,0.7);display:flex;
+  align-items:center;justify-content:center;font-size:10px;color:var(--orange);font-weight:bold;
+}
+
 .admin-actions{display:flex;gap:12px;margin-top:4px;flex-wrap:wrap;}
 .publish-btn{
   background:var(--orange);color:#fff;border:none;padding:13px 28px;
@@ -364,30 +325,13 @@ body.admin-active .product-card:hover .delete-btn {
   display:flex;align-items:center;gap:8px;
 }
 .copy-btn:hover{border-color:#fff;}
-.admin-note{font-size:11px;color:#444;margin-top:14px;line-height:1.8;}
 
 /* FOOTER */
 footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative;z-index:1;}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:36px;margin-bottom:40px;}
-.footer-logo-wrap .logo-main{font-size:20px;color:#fff;}
-.footer-logo-wrap .logo-sub{color:var(--orange);}
-.footer-desc{font-size:12px;color:#555;line-height:1.8;margin-top:10px;}
-.footer-col h4{
-  font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
-  color:#fff;margin-bottom:16px;font-family:'Barlow Condensed',sans-serif;
-  border-bottom:1px solid #222;padding-bottom:8px;
-}
-.footer-col ul{list-style:none;}
-.footer-col ul li{margin-bottom:9px;}
-.footer-col ul a{color:#555;text-decoration:none;font-size:13px;transition:color .2s;}
-.footer-col ul a:hover{color:#fff;}
 .footer-bottom{
   border-top:1px solid #1a1a1a;padding-top:20px;font-size:11px;
   color:#333;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
 }
-.footer-bottom a{color:#555;text-decoration:none;}
-.footer-bottom a:hover{color:#fff;}
-
 @media(max-width:650px){
   .nav-links{display:none;}
   .hero{flex-direction:column;}
@@ -401,51 +345,11 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
 
 <button class="floating-admin-trigger" onclick="checkAdminPassword()" title="Modo Administrador">⚙️</button>
 
-<svg class="db-watermark-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="ballGrad" cx="38%" cy="32%" r="65%">
-      <stop offset="0%" stop-color="#FFE566"/>
-      <stop offset="30%" stop-color="#FFA500"/>
-      <stop offset="65%" stop-color="#FF4500"/>
-      <stop offset="100%" stop-color="#8B0000"/>
-    </radialGradient>
-    <radialGradient id="shineGrad" cx="35%" cy="28%" r="45%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="60%" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0.45"/>
-    </radialGradient>
-    <clipPath id="ballClip"><circle cx="250" cy="250" r="232"/></clipPath>
-  </defs>
-  <circle cx="250" cy="250" r="232" fill="url(#ballGrad)"/>
-  <ellipse cx="250" cy="250" rx="232" ry="36" fill="#cc3300" opacity="0.5" clip-path="url(#ballClip)"/>
-  <ellipse cx="250" cy="250" rx="36" ry="232" fill="#cc3300" opacity="0.35" clip-path="url(#ballClip)"/>
-  <rect x="-50" y="216" width="600" height="52" rx="26" fill="#cc3300" opacity="0.3" transform="rotate(-40 250 250)" clip-path="url(#ballClip)"/>
-  <rect x="-50" y="216" width="600" height="52" rx="26" fill="#cc3300" opacity="0.3" transform="rotate(40 250 250)" clip-path="url(#ballClip)"/>
-  <circle cx="250" cy="250" r="232" fill="url(#shadowGrad)"/>
-  <g transform="translate(155,160)" opacity="0.85">
-    <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
-  </g>
-  <g transform="translate(330,148)" opacity="0.85">
-    <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
-  </g>
-  <g transform="translate(170,340)" opacity="0.85">
-    <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
-  </g>
-  <g transform="translate(340,330)" opacity="0.85">
-    <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
-  </g>
-  <circle cx="250" cy="250" r="232" fill="url(#shineGrad)"/>
-  <ellipse cx="185" cy="158" rx="68" ry="42" fill="#ffffff" opacity="0.2" transform="rotate(-25 185 158)"/>
-</svg>
-
 <div class="topbar">🔥 Envío a todo RD · <span>Usa WhatsApp para comprar directo</span> · Stock limitado</div>
 
 <header>
   <div class="header-inner">
-    <a href="#" class="nav-logo" style="text-decoration:none;">
+    <a href="#" class="nav-logo">
       <span class="logo-top">Capsule Store</span>
       <span class="logo-main">BY DRAGON BALL RD</span>
       <span class="logo-sub">Colección Oficial</span>
@@ -454,7 +358,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
       <li><a href="#">Inicio</a></li>
       <li><a href="#catalogo">Catálogo</a></li>
       <li><a href="#contacto">Contacto</a></li>
-      <li><a href="https://www.instagram.com/dragonballrd/" target="_blank">Instagram</a></li>
     </ul>
     <div class="nav-actions">
       <button class="cart-btn" onclick="toggleCart()">
@@ -466,54 +369,12 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
 
 <section class="hero">
   <div class="hero-text">
-    <p class="hero-eyebrow">⚡ Temporada 2025 — Edición Limitada</p>
+    <p class="hero-eyebrow">⚡ Temporada 2026 — Edición Limitada</p>
     <h1>CAPSULE STORE<br><span>BY DRAGON BALL RD</span></h1>
     <p>Ropa y accesorios exclusivos para verdaderos Saiyajines. Calidad premium, envíos a toda la República Dominicana.</p>
     <div class="hero-btns">
       <a href="#catalogo" class="btn-hero-primary">Ver Catálogo</a>
-      <a href="https://www.instagram.com/dragonballrd/" target="_blank" class="btn-hero-outline">📸 Instagram</a>
     </div>
-  </div>
-  <div style="flex-shrink:0;position:relative;z-index:2;">
-    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 8px 32px rgba(255,107,0,0.6));">
-      <defs>
-        <radialGradient id="hballG" cx="36%" cy="30%" r="68%">
-          <stop offset="0%" stop-color="#FFE566"/>
-          <stop offset="28%" stop-color="#FFA500"/>
-          <stop offset="62%" stop-color="#FF4500"/>
-          <stop offset="100%" stop-color="#7B0000"/>
-        </radialGradient>
-        <radialGradient id="hshineG" cx="33%" cy="25%" r="42%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="hshadG" cx="50%" cy="50%" r="50%">
-          <stop offset="55%" stop-color="#000" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
-        </radialGradient>
-        <clipPath id="hclip"><circle cx="100" cy="100" r="94"/></clipPath>
-      </defs>
-      <circle cx="100" cy="100" r="94" fill="url(#hballG)"/>
-      <ellipse cx="100" cy="100" rx="94" ry="15" fill="#cc2200" opacity="0.45" clip-path="url(#hclip)"/>
-      <ellipse cx="100" cy="100" rx="15" ry="94" fill="#cc2200" opacity="0.3" clip-path="url(#hclip)"/>
-      <rect x="-20" y="86" width="240" height="20" rx="10" fill="#cc2200" opacity="0.28" transform="rotate(-38 100 100)" clip-path="url(#hclip)"/>
-      <rect x="-20" y="86" width="240" height="20" rx="10" fill="#cc2200" opacity="0.28" transform="rotate(38 100 100)" clip-path="url(#hclip)"/>
-      <circle cx="100" cy="100" r="94" fill="url(#hshadG)"/>
-      <g transform="translate(58,58)" fill="#cc0000" opacity="0.9">
-        <polygon points="0,-10 2.4,-3.3 9.5,-3.3 4,2.5 5.9,9.5 0,5.5 -5.9,9.5 -4,2.5 -9.5,-3.3 -2.4,-3.3"/>
-      </g>
-      <g transform="translate(142,55)" fill="#cc0000" opacity="0.9">
-        <polygon points="0,-10 2.4,-3.3 9.5,-3.3 4,2.5 5.9,9.5 0,5.5 -5.9,9.5 -4,2.5 -9.5,-3.3 -2.4,-3.3"/>
-      </g>
-      <g transform="translate(62,142)" fill="#cc0000" opacity="0.9">
-        <polygon points="0,-10 2.4,-3.3 9.5,-3.3 4,2.5 5.9,9.5 0,5.5 -5.9,9.5 -4,2.5 -9.5,-3.3 -2.4,-3.3"/>
-      </g>
-      <g transform="translate(140,138)" fill="#cc0000" opacity="0.9">
-        <polygon points="0,-10 2.4,-3.3 9.5,-3.3 4,2.5 5.9,9.5 0,5.5 -5.9,9.5 -4,2.5 -9.5,-3.3 -2.4,-3.3"/>
-      </g>
-      <circle cx="100" cy="100" r="94" fill="url(#hshineG)"/>
-      <ellipse cx="72" cy="58" rx="26" ry="16" fill="#fff" opacity="0.22" transform="rotate(-25 72 58)"/>
-    </svg>
   </div>
 </section>
 
@@ -529,13 +390,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     <button class="filter-btn" onclick="filterCat('abrigos',this)">Abrigos</button>
     <button class="filter-btn" onclick="filterCat('accesorios',this)">Accesorios</button>
   </div>
-  <div class="results-right">
-    <select class="sort-select" onchange="sortProducts(this.value)">
-      <option value="">Ordenar</option>
-      <option value="asc">Precio: menor a mayor</option>
-      <option value="desc">Precio: mayor a menor</option>
-    </select>
-  </div>
 </div>
 
 <div class="products-section">
@@ -544,7 +398,8 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
 
 <div class="admin-section" id="admin">
   <div class="admin-title">Panel de Administración <span class="admin-badge">Uso Interno</span></div>
-  <p class="admin-subtitle">Agrega nuevos productos al catálogo. Solo tú ves esta sección.</p>
+  <p class="admin-subtitle">Agrega nuevos productos seleccionando fotos reales de tu computadora.</p>
+  
   <div class="admin-form">
     <div class="admin-field">
       <label>Nombre del Producto</label>
@@ -576,70 +431,27 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     </div>
   </div>
 
-  <div style="margin-bottom:20px;">
-    <label style="display:block;font-size:10px;font-weight:700;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:10px;font-family:'Barlow Condensed',sans-serif;">
-      📸 Fotos del Artículo (puedes subir varias)
+  <div style="margin-bottom: 20px;">
+    <label style="display:block;font-size:10px;font-weight:700;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">
+      📸 Fotos del Producto (Sube directamente archivos)
     </label>
-    <div id="photo-drop-zone" style="
-      border:2px dashed #333;padding:28px 20px;text-align:center;cursor:pointer;
-      background:#111;border-radius:4px;transition:border-color .2s;
-    " onclick="document.getElementById('a-photos').click()"
-       ondragover="event.preventDefault();this.style.borderColor='#FF6B00'"
-       ondragleave="this.style.borderColor='#333'"
-       ondrop="handleDrop(event)">
-      <div style="font-size:32px;margin-bottom:8px;">📁</div>
-      <div style="color:#777;font-size:13px;">Haz clic o arrastra fotos aquí</div>
-      <div style="color:#444;font-size:11px;margin-top:4px;">JPG, PNG, WEBP · Múltiples archivos permitidos</div>
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+      <span>📁 Haz clic para buscar fotos o arrástralas aquí</span>
+      <p>Se subirán automáticamente a internet para generar sus enlaces finales</p>
+      <input type="file" id="file-input" multiple accept="image/*" onchange="handleFileSelect(event)">
     </div>
-    <input type="file" id="a-photos" multiple accept="image/*" style="display:none" onchange="handlePhotoUpload(this.files)">
-    <div id="photo-preview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;"></div>
+    <div class="photo-preview-grid" id="photo-preview"></div>
   </div>
 
   <div class="admin-actions">
     <button class="publish-btn" onclick="publishProduct()">✅ Publicar Producto</button>
     <button class="copy-btn" onclick="copyCode()">📋 Copiar Código del Catálogo</button>
   </div>
-  <p class="admin-note">💡 Al publicar, el producto aparece de inmediato en el catálogo de arriba.<br>📋 Usa "Copiar Código" para pegar el array actualizado en tu archivo de GitHub y guardar los cambios permanentemente.<br>🗑️ Pasa el mouse sobre cualquier producto para ver el botón de eliminar.</p>
 </div>
 
 <footer id="contacto">
-  <div class="footer-grid">
-    <div class="footer-logo-wrap">
-      <div class="logo-top" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;color:#555;">Capsule Store</div>
-      <div class="logo-main" style="font-family:'Bebas Neue',cursive;font-size:22px;color:#fff;letter-spacing:1px;">BY DRAGON BALL RD</div>
-      <div class="logo-sub" style="font-size:11px;letter-spacing:2px;color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;">Colección Oficial</div>
-      <p class="footer-desc">Tu tienda de ropa y accesorios exclusivos de Dragon Ball en República Dominicana. ¡El poder de un Super Saiyan en tu armario!</p>
-    </div>
-    <div class="footer-col">
-      <h4>Navegación</h4>
-      <ul>
-        <li><a href="#">Inicio</a></li>
-        <li><a href="#catalogo">Catálogo</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-        <li><a href="https://www.instagram.com/dragonballrd/" target="_blank">Instagram</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Ayuda</h4>
-      <ul>
-        <li><a href="#">Política de envíos</a></li>
-        <li><a href="#">Devoluciones</a></li>
-        <li><a href="#">Preguntas frecuentes</a></li>
-        <li><a href="#">Tallas disponibles</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Contacto</h4>
-      <ul>
-        <li><a href="#">📍 Santiago, RD</a></li>
-        <li><a href="https://wa.me/18098787656" target="_blank">📱 WhatsApp +1 (809) 878-7656</a></li>
-        <li><a href="https://www.instagram.com/dragonballrd/" target="_blank">📸 @dragonballrd</a></li>
-      </ul>
-    </div>
-  </div>
   <div class="footer-bottom">
-    <span>© 2025 Capsule Store by Dragon Ball RD. Todos los derechos reservados.</span>
-    <span>💳 Efectivo · Transferencia · Tarjeta</span>
+    <p>&copy; 2026 Capsule Store by Dragon Ball RD. Todos los derechos reservados.</p>
   </div>
 </footer>
 
@@ -648,18 +460,15 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-img-wrap">
       <div class="modal-slides" id="modal-slides"></div>
-      <button class="carousel-prev2" id="cprev" onclick="slideModal(-1)" style="display:none">‹</button>
-      <button class="carousel-next2" id="cnext" onclick="slideModal(1)" style="display:none">›</button>
+      <button class="carousel-prev" id="cprev" onclick="slideModal(-1)" style="display:none">‹</button>
+      <button class="carousel-next" id="cnext" onclick="slideModal(1)" style="display:none">›</button>
     </div>
     <div class="modal-thumbs" id="modal-thumbs"></div>
     <div class="modal-body">
       <p class="modal-category" id="modal-cat"></p>
       <h3 class="modal-name" id="modal-name"></h3>
       <p class="modal-price" id="modal-price"></p>
-      <p class="modal-desc">Producto exclusivo de Capsule Store by Dragon Ball RD. Calidad premium, diseño original. Disponible en varios talles. ¡Cantidad limitada!</p>
-      <a class="wha-btn" id="wha-btn" href="#" target="_blank">
-        <span class="wha-icon">💬</span> Comprar por WhatsApp
-      </a>
+      <a class="wha-btn" id="wha-btn" href="#" target="_blank">💬 Comprar por WhatsApp</a>
     </div>
   </div>
 </div>
@@ -670,12 +479,9 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     <h3>Tu Carrito</h3>
     <button class="cart-close-btn" onclick="toggleCart()">✕</button>
   </div>
-  <div class="cart-body" id="cart-body">
-    <div class="cart-empty-state"><span>🛍️</span>Tu carrito está vacío</div>
-  </div>
+  <div class="cart-body" id="cart-body"></div>
   <div class="cart-foot">
     <div class="cart-total-row"><span>Subtotal</span><span id="cart-total">RD$0</span></div>
-    <p class="cart-note">Envío calculado al finalizar el pedido</p>
     <button class="checkout-btn" onclick="cartWhatsApp()">💬 Pedir por WhatsApp</button>
   </div>
 </div>
@@ -683,10 +489,13 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== PRODUCTS ARRAY =====
+// API KEY CONFIGURADA
+const FREEIMAGE_API_KEY = "6d207e02198a847aa98d0a2a901485a5"; 
+
+// ===== ARREGLO DE PRODUCTOS =====
 let products = [
-  {id:100,name:"goki",price:200,emoji:"📦",cat:"camisetas",badge:"",photos:[]},
-  {id:100,name:"1111",price:100,emoji:"📦",cat:"camisetas",badge:"",photos:[]},
+  {id:1,name:"Memoria USB Dragon Ball Z",price:3500,emoji:"💾",cat:"accesorios",badge:"agotado",photos:[]},
+  {id:2,name:"T-Shirt Goku y Vegeta",price:1000,emoji:"👕",cat:"camisetas",badge:"nuevo",photos:[]},
   {id:3,name:"T-Shirt Blanca Saga Dragon Ball",price:1000,emoji:"👕",cat:"camisetas",badge:"",photos:[]},
   {id:4,name:"Abrigo Dragón Ball Súper",price:2500,emoji:"🧥",cat:"abrigos",badge:"nuevo",photos:[]},
   {id:5,name:"Abrigo Goku Dragon Ball Z",price:2500,emoji:"🧥",cat:"abrigos",badge:"",photos:[]},
@@ -694,51 +503,123 @@ let products = [
   {id:7,name:"Hoodie Rojo Vegeta",price:2200,emoji:"🧥",cat:"abrigos",badge:"nuevo",photos:[]},
   {id:8,name:"Gorra Bordada Logo",price:900,emoji:"🧢",cat:"accesorios",badge:"",photos:[]},
 ];
-// ==========================
 
 let cart = [];
 let nextId = 100;
 let currentCat = 'todos';
-let currentSort = '';
-let pendingPhotos = []; 
 let modalSlideIndex = 0;
 let modalSlides = [];
+let uploadedPhotos = []; 
 
 const WHA_NUMBER = '18098787656';
 
-// ---- CONTROL DE CONTRASEÑA MODO ADMINISTRADOR ----
 function checkAdminPassword() {
   const adminSection = document.getElementById('admin');
-  
-  // Si ya está abierto, lo cerramos de inmediato al pulsar de nuevo
   if (adminSection.style.display === 'block') {
     adminSection.style.display = 'none';
     document.body.classList.remove('admin-active');
-    showToast('⚙️ Modo Administrador desactivado');
     return;
   }
-
-  // Petición de contraseña
-  const pass = prompt("Introduce la contraseña de administrador para modificar el catálogo:");
-  
-  // AQUÍ PUEDES CAMBIAR LA CONTRASEÑA DE ACCESO
+  const pass = prompt("Introduce la contraseña de administrador:");
   if (pass === "admin123") {
     adminSection.style.display = 'block';
-    document.body.classList.add('admin-active'); // Activa la visibilidad de los botones de borrado (✕)
-    showToast('🔓 Modo Administrador activo');
-    
-    // Desplazar la vista suavemente hasta la sección de administración recién abierta
+    document.body.classList.add('admin-active');
     adminSection.scrollIntoView({ behavior: 'smooth' });
-  } else if (pass !== null) {
-    showToast('❌ Contraseña incorrecta');
   }
 }
 
-// ---- RENDER PRODUCTS ----
+// ---- MANEJO DE ARCHIVOS Y CARGA EN LÍNEA ----
+function handleFileSelect(event) {
+  const files = event.target.files;
+  if (!files.length) return;
+  for (let i = 0; i < files.length; i++) {
+    uploadFileToWeb(files[i]);
+  }
+}
+
+function uploadFileToWeb(file) {
+  const previewContainer = document.getElementById('photo-preview');
+  const tempId = 'upload-' + Math.random().toString(36).substr(2, 9);
+  
+  const item = document.createElement('div');
+  item.className = 'preview-item';
+  item.id = tempId;
+  item.innerHTML = `<div class="preview-loading">Subiendo...</div>`;
+  previewContainer.appendChild(item);
+
+  const formData = new FormData();
+  formData.append('key', FREEIMAGE_API_KEY);
+  formData.append('image', file);
+
+  fetch('https://freeimage.host/api/1/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data && data.image && data.image.url) {
+      const finalUrl = data.image.url;
+      uploadedPhotos.push(finalUrl);
+      
+      document.getElementById(tempId).innerHTML = `
+        <img src="${finalUrl}">
+        <button onclick="removeUploadedPhoto('${finalUrl}', '${tempId}')" style="position:absolute;top:0;right:0;background:red;color:white;border:none;cursor:pointer;width:16px;height:16px;font-size:10px;z-index:10;">✕</button>
+      `;
+    } else {
+      document.getElementById(tempId).remove();
+      showToast('❌ Error al procesar imagen');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById(tempId).remove();
+    showToast('❌ Error de red al subir la imagen');
+  });
+}
+
+function removeUploadedPhoto(url, elementId) {
+  uploadedPhotos = uploadedPhotos.filter(p => p !== url);
+  document.getElementById(elementId).remove();
+}
+
+const dropzone = document.getElementById('dropzone');
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  if(files.length) {
+    for (let i = 0; i < files.length; i++) { uploadFileToWeb(files[i]); }
+  }
+});
+
+// ---- PUBLICAR PRODUCTO LOCALMENTE ----
+function publishProduct(){
+  const name=document.getElementById('a-name').value.trim();
+  const price=parseInt(document.getElementById('a-price').value);
+  const emoji=document.getElementById('a-emoji').value.trim()||'📦';
+  const cat=document.getElementById('a-cat').value;
+  const badge=document.getElementById('a-badge').value;
+
+  if(!name||!price){showToast('⚠️ Completa nombre y precio');return;}
+  
+  const newP={id:nextId++,name,price,emoji,cat,badge,photos:[...uploadedPhotos]};
+  products.unshift(newP);
+  renderProducts();
+  
+  document.getElementById('a-name').value='';
+  document.getElementById('a-price').value='';
+  document.getElementById('a-emoji').value='';
+  document.getElementById('a-badge').value='';
+  document.getElementById('photo-preview').innerHTML='';
+  uploadedPhotos = [];
+  showToast('✅ ¡Producto publicado con éxito!');
+}
+
+// ---- MOSTRAR PRODUCTOS ----
 function renderProducts(){
   let list = currentCat==='todos' ? [...products] : products.filter(p=>p.cat===currentCat);
-  if(currentSort==='asc') list.sort((a,b)=>a.price-b.price);
-  if(currentSort==='desc') list.sort((a,b)=>b.price-a.price);
   document.getElementById('total-count').textContent = products.length;
   document.getElementById('products-grid').innerHTML = list.map(p=>{
     const hasPhoto = p.photos && p.photos.length > 0;
@@ -752,7 +633,6 @@ function renderProducts(){
         ${imgHTML}
         ${p.badge==='agotado'?'<div class="badge-agotado">Agotado</div>':''}
         ${p.badge==='nuevo'?'<div class="badge-nuevo">Nuevo</div>':''}
-        ${hasPhoto && p.photos.length>1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;">+${p.photos.length}</div>` : ''}
         <div class="product-overlay">
           ${p.badge!=='agotado'?`<button class="quick-add-btn" onclick="addCart(${p.id},event)">+ Agregar al carrito</button>`:''}
         </div>
@@ -771,9 +651,8 @@ function filterCat(cat,btn){
   btn.classList.add('active');
   renderProducts();
 }
-function sortProducts(val){currentSort=val;renderProducts();}
 
-// ---- MODAL WITH CAROUSEL ----
+// ---- CAROUSEL Y DETALLE DEL MODAL ----
 function openModal(id){
   const p = products.find(x=>x.id===id); if(!p) return;
   modalSlideIndex = 0;
@@ -793,11 +672,10 @@ function openModal(id){
     thumbsEl.innerHTML = modalSlides.map((s,i) =>
       s.startsWith('emoji:')
         ? `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})">${s.slice(6)}</div>`
-        : `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})"><img src="${s}" alt="foto ${i+1}"></div>`
+        : `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})"><img src="${s}"></div>`
     ).join('');
   } else {
     thumbsEl.style.display = 'none';
-    thumbsEl.innerHTML = '';
   }
 
   document.getElementById('cprev').style.display = modalSlides.length>1 ? 'flex' : 'none';
@@ -806,7 +684,7 @@ function openModal(id){
   document.getElementById('modal-cat').textContent = p.cat.toUpperCase();
   document.getElementById('modal-name').textContent = p.name;
   document.getElementById('modal-price').textContent = 'RD$ '+p.price.toLocaleString('es-DO')+'.00';
-  const msg = encodeURIComponent(`¡Hola! Me interesa comprar el artículo: ${p.name} (RD$ ${p.price.toLocaleString('es-DO')}.00).`);
+  const msg = encodeURIComponent(`¡Hola! Me interesa este artículo: ${p.name}`);
   document.getElementById('wha-btn').href = `https://wa.me/${WHA_NUMBER}?text=${msg}`;
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -814,165 +692,91 @@ function openModal(id){
 function slideModal(dir){
   modalSlideIndex = (modalSlideIndex + dir + modalSlides.length) % modalSlides.length;
   document.getElementById('modal-slides').style.transform = `translateX(-${modalSlideIndex*100}%)`;
-  document.querySelectorAll('.modal-thumb').forEach((t,i)=>t.classList.toggle('active-thumb',i===modalSlideIndex));
+  updateActiveThumb();
 }
-
-// ---- AGREGADO PARA FUNCIONALIDAD DE MINIATURAS ----
 function goToSlide(i){
   modalSlideIndex = i;
   document.getElementById('modal-slides').style.transform = `translateX(-${i*100}%)`;
-  document.querySelectorAll('.modal-thumb').forEach((t,idx)=>t.classList.toggle('active-thumb',idx===i));
+  updateActiveThumb();
 }
-
+function updateActiveThumb(){
+  document.querySelectorAll('.modal-thumb').forEach((t,idx)=>{
+    if(idx===modalSlideIndex) t.classList.add('active-thumb'); else t.classList.remove('active-thumb');
+  });
+}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay')) closeModal();}
 
-// ---- CART ----
+// ---- SISTEMA DE CARRITO ----
 function addCart(id,e){
   e&&e.stopPropagation();
   const p=products.find(x=>x.id===id); if(!p) return;
   const ex=cart.find(x=>x.id===id);
-  if(ex) ex.qty++;
-  else cart.push({...p,qty:1});
+  if(ex) ex.qty++; else cart.push({...p,qty:1});
   updateCartUI();
-  showToast('✅ '+p.name+' agregado');
+  showToast('✅ Artículo agregado');
 }
-
 function updateCartUI(){
   const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const qty=cart.reduce((s,i)=>s+i.qty,0);
-  document.getElementById('cart-count').textContent=qty;
   document.getElementById('cart-total').textContent='RD$ '+total.toLocaleString('es-DO');
+  document.getElementById('cart-count').textContent=cart.reduce((s,i)=>s+i.qty,0);
   const body=document.getElementById('cart-body');
-  if(!cart.length){
-    body.innerHTML='<div class="cart-empty-state"><span>🛍️</span>Tu carrito está vacío</div>';
-    return;
-  }
+  if(!cart.length){ body.innerHTML='<p style="text-align:center;color:#888;margin-top:40px;">El carrito está vacío</p>'; return; }
   body.innerHTML=cart.map(item=>`
-    <div class="cart-item">
-      <div class="ci-img">${item.photos&&item.photos.length?`<img src="${item.photos[0]}" style="width:100%;height:100%;object-fit:cover;">`:item.emoji}</div>
-      <div class="ci-info">
-        <p class="ci-name">${item.name}</p>
-        <p class="ci-price">RD$ ${item.price.toLocaleString('es-DO')}.00</p>
-        <div class="ci-qty">
-          <button class="q-btn" onclick="changeQty(${item.id},-1)">−</button>
-          <span style="font-size:14px;font-weight:600;">${item.qty}</span>
-          <button class="q-btn" onclick="changeQty(${item.id},1)">+</button>
-          <button class="rm-btn" onclick="removeItem(${item.id})">Eliminar</button>
-        </div>
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:center;">
+      <div style="width:45px;height:45px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        ${item.photos&&item.photos.length?`<img src="${item.photos[0]}" style="width:100%;height:100%;object-fit:cover;">`:`<span style="font-size:20px;">${item.emoji}</span>`}
       </div>
+      <div style="flex:1;">
+        <p style="font-weight:600;font-size:12px;text-transform:uppercase;">${item.name}</p>
+        <p style="color:#666;font-size:11px;">${item.qty} x RD$ ${item.price.toLocaleString('es-DO')}</p>
+      </div>
+      <button onclick="removeCart(${item.id})" style="background:none;border:none;color:#999;cursor:pointer;font-size:11px;text-decoration:underline;">Quitar</button>
     </div>
   `).join('');
 }
-
-function changeQty(id,d){
-  const item=cart.find(i=>i.id===id); if(!item) return;
-  item.qty+=d;
-  if(item.qty<=0) cart=cart.filter(i=>i.id!==id);
+function removeCart(id){
+  cart=cart.filter(x=>x.id!==id);
   updateCartUI();
 }
-function removeItem(id){cart=cart.filter(i=>i.id!==id);updateCartUI();}
-
 function cartWhatsApp(){
-  if(!cart.length){showToast('⚠️ Tu carrito está vacío');return;}
-  const lines=cart.map(i=>`- ${i.name} x${i.qty} (RD$ ${(i.price*i.qty).toLocaleString('es-DO')}.00)`).join('\n');
-  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const msg=encodeURIComponent(`¡Hola! Quiero hacer el siguiente pedido:\n${lines}\n\n*Total: RD$ ${total.toLocaleString('es-DO')}.00*`);
-  window.open(`https://wa.me/${WHA_NUMBER}?text=${msg}`,'_blank');
+  if(!cart.length) { showToast('⚠️ Tu carrito está vacío'); return; }
+  let lines = `¡Hola Dragon Ball RD! Me gustaría pedir los siguientes artículos:\n\n`;
+  cart.forEach(i => { lines += `• ${i.name} (Cantidad: ${i.qty}) - RD$ ${(i.price*i.qty).toLocaleString('es-DO')}\n`; });
+  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  lines += `\n*Total estimado: RD$ ${total.toLocaleString('es-DO')}*`;
+  window.open(`https://wa.me/${WHA_NUMBER}?text=${encodeURIComponent(lines)}`,'_blank');
 }
-
 function toggleCart(){
   document.getElementById('cart-drawer').classList.toggle('open');
   document.getElementById('cart-overlay-bg').classList.toggle('open');
 }
-
-// ---- DELETE PRODUCT ----
 function deleteProduct(id,e){
   e&&e.stopPropagation();
-  if(!confirm('¿Eliminar este producto del catálogo?')) return;
-  products=products.filter(p=>p.id!==id);
-  renderProducts();
-  showToast('🗑️ Producto eliminado');
+  if(confirm('¿Seguro que deseas eliminar este producto?')) { products=products.filter(p=>p.id!==id); renderProducts(); }
 }
 
-// ---- PHOTO UPLOAD ----
-function handlePhotoUpload(files){
-  Array.from(files).forEach(file=>{
-    const reader = new FileReader();
-    reader.onload = e => {
-      pendingPhotos.push(e.target.result);
-      renderPhotoPreview();
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('photo-drop-zone').style.borderColor='#333';
-  handlePhotoUpload(e.dataTransfer.files);
-}
-
-function renderPhotoPreview(){
-  const container = document.getElementById('photo-preview');
-  container.innerHTML = pendingPhotos.map((src,i)=>`
-    <div style="position:relative;width:80px;height:80px;">
-      <img src="${src}" style="width:80px;height:80px;object-fit:cover;border:2px solid #333;">
-      <button onclick="removePreviewPhoto(${i})" style="
-        position:absolute;top:-6px;right:-6px;background:#cc0000;color:#fff;
-        border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;
-        font-size:11px;display:flex;align-items:center;justify-content:center;
-        font-weight:800;
-      ">✕</button>
-    </div>
-  `).join('');
-}
-
-function removePreviewPhoto(i){
-  pendingPhotos.splice(i,1);
-  renderPhotoPreview();
-}
-
-// ---- PUBLISH PRODUCT ----
-function publishProduct(){
-  const name=document.getElementById('a-name').value.trim();
-  const price=parseInt(document.getElementById('a-price').value);
-  const emoji=document.getElementById('a-emoji').value.trim()||'📦';
-  const cat=document.getElementById('a-cat').value;
-  const badge=document.getElementById('a-badge').value;
-  if(!name||!price){showToast('⚠️ Completa nombre y precio');return;}
-  const newP={id:nextId++,name,price,emoji,cat,badge,photos:[...pendingPhotos]};
-  products.unshift(newP);
-  renderProducts();
-  
-  document.getElementById('a-name').value='';
-  document.getElementById('a-price').value='';
-  document.getElementById('a-emoji').value='';
-  document.getElementById('a-badge').value='';
-  document.getElementById('a-photos').value='';
-  pendingPhotos=[];
-  renderPhotoPreview();
-  showToast('✅ ¡Producto publicado! Revisa el catálogo arriba.');
-}
-
-// ---- COPY CODE ----
+// ---- COPIAR CÓDIGO CON LAS IMÁGENES REALES ----
 function copyCode(){
-  const code=`let products = [\n${products.map(p=>`  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[]}`).join(',\n')},\n];`;
+  const code=`let products = [\n${products.map(p=>{
+    const photosStr = p.photos && p.photos.length ? p.photos.map(url=>`"${url}"`).join(',') : '';
+    return `  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[${photosStr}]}`;
+  }).join(',\n')},\n];`;
+  
   navigator.clipboard.writeText(code).then(()=>{
-    showToast('📋 Código copiado — pégalo en tu archivo de GitHub');
+    showToast('📋 Código copiado con enlaces incluidos. Pégalo en tu GitHub.');
   }).catch(()=>{
-    prompt('Copia este código manualmente:', code);
+    prompt('Error al usar el portapapeles. Copia esto de forma manual:', code);
   });
 }
 
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
 renderProducts();
 </script>
-
 </body>
 </html>
