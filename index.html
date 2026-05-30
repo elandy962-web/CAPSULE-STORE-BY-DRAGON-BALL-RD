@@ -146,14 +146,20 @@ header{
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0;}
 .product-card{cursor:pointer;position:relative;border:1px solid transparent;transition:border-color .2s;}
 .product-card:hover{border-color:var(--border);}
+
+/* ELIMINAR ARTÍCULO (SOLO SE MUESTRA EN MODO ADMIN SELECCIONADO) */
 .delete-btn{
   position:absolute;top:8px;right:8px;z-index:5;background:rgba(0,0,0,.75);
   color:#fff;border:none;width:28px;height:28px;border-radius:50%;
-  font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .2s;line-height:1;
+  font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;
+  line-height:1;transition:background .2s;
 }
-.product-card:hover .delete-btn{opacity:1;}
+/* Activar visibilidad de eliminación solo si la clase admin-active está en el body */
+body.admin-active .product-card:hover .delete-btn {
+  display: flex;
+}
 .delete-btn:hover{background:#cc0000;}
+
 .product-img-wrap{
   background:var(--light);aspect-ratio:1;overflow:hidden;
   display:flex;align-items:center;justify-content:center;position:relative;
@@ -231,26 +237,6 @@ header{
   border:none;width:32px;height:32px;font-size:16px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;z-index:10;
 }
-.modal-img-wrap{position:relative;background:var(--light);height:300px;overflow:hidden;}
-.modal-slides{display:flex;height:100%;transition:transform .35s ease;}
-.modal-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--light);}
-.modal-slide img{width:100%;height:100%;object-fit:cover;}
-.slide-emoji{font-size:120px;}
-.carousel-prev2,.carousel-next2{
-  position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.55);
-  color:#fff;border:none;width:36px;height:36px;cursor:pointer;font-size:16px;
-  display:flex;align-items:center;justify-content:center;z-index:3;transition:background .2s;
-}
-.carousel-prev2{left:10px;} .carousel-next2{right:10px;}
-.carousel-prev2:hover,.carousel-next2:hover{background:var(--orange);}
-.modal-thumbs{display:flex;gap:6px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none;}
-.modal-thumb{
-  width:56px;height:56px;cursor:pointer;border:2px solid transparent;
-  flex-shrink:0;transition:border-color .2s;font-size:26px;
-  display:flex;align-items:center;justify-content:center;background:var(--light);overflow:hidden;
-}
-.modal-thumb.active-thumb{border-color:var(--orange);}
-.modal-thumb img{width:100%;height:100%;object-fit:cover;}
 .modal-body{padding:20px 28px 28px;}
 .modal-category{
   font-size:10px;font-weight:700;letter-spacing:2px;color:var(--orange);
@@ -327,9 +313,21 @@ header{
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ADMIN PANEL */
+/* BOTÓN DE ADMINISTRACIÓN TOTALMENTE DISCRETO A LA DERECHA */
+.floating-admin-trigger{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  background:rgba(10,10,10,0.4);color:#fff;border:none;
+  width:36px;height:36px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  transition:all .2s;
+}
+.floating-admin-trigger:hover{
+  background:var(--black);transform:scale(1.05);
+}
+
+/* ADMIN PANEL (OCULTO POR DEFECTO HASTA ENTRAR CON CLAVE) */
 .admin-section{
-  margin-top:60px;border-top:3px solid var(--black);background:#0a0a0a;
+  display:none;margin-top:60px;border-top:3px solid var(--black);background:#0a0a0a;
   padding:40px 5%;position:relative;z-index:1;
 }
 .admin-title{
@@ -401,7 +399,8 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
 </head>
 <body>
 
-<!-- DRAGON BALL WATERMARK SVG -->
+<button class="floating-admin-trigger" onclick="checkAdminPassword()" title="Modo Administrador">⚙️</button>
+
 <svg class="db-watermark-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <radialGradient id="ballGrad" cx="38%" cy="32%" r="65%">
@@ -420,45 +419,30 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     </radialGradient>
     <clipPath id="ballClip"><circle cx="250" cy="250" r="232"/></clipPath>
   </defs>
-  <!-- Base sphere -->
   <circle cx="250" cy="250" r="232" fill="url(#ballGrad)"/>
-  <!-- Horizontal band (equator) -->
   <ellipse cx="250" cy="250" rx="232" ry="36" fill="#cc3300" opacity="0.5" clip-path="url(#ballClip)"/>
-  <!-- Vertical band -->
   <ellipse cx="250" cy="250" rx="36" ry="232" fill="#cc3300" opacity="0.35" clip-path="url(#ballClip)"/>
-  <!-- Diagonal band TL-BR -->
   <rect x="-50" y="216" width="600" height="52" rx="26" fill="#cc3300" opacity="0.3" transform="rotate(-40 250 250)" clip-path="url(#ballClip)"/>
-  <!-- Diagonal band TR-BL -->
   <rect x="-50" y="216" width="600" height="52" rx="26" fill="#cc3300" opacity="0.3" transform="rotate(40 250 250)" clip-path="url(#ballClip)"/>
-  <!-- Shadow overlay -->
   <circle cx="250" cy="250" r="232" fill="url(#shadowGrad)"/>
-  <!-- 4 Stars arranged like Dragon Ball -->
-  <!-- star top-left -->
   <g transform="translate(155,160)" opacity="0.85">
     <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
   </g>
-  <!-- star top-right -->
   <g transform="translate(330,148)" opacity="0.85">
     <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
   </g>
-  <!-- star bottom-left -->
   <g transform="translate(170,340)" opacity="0.85">
     <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
   </g>
-  <!-- star bottom-right -->
   <g transform="translate(340,330)" opacity="0.85">
     <polygon points="0,-22 5.1,-7 21,-7 8.5,5.4 13,21 0,12.5 -13,21 -8.5,5.4 -21,-7 -5.1,-7" fill="#cc1100"/>
   </g>
-  <!-- Shine -->
   <circle cx="250" cy="250" r="232" fill="url(#shineGrad)"/>
-  <!-- Specular highlight -->
   <ellipse cx="185" cy="158" rx="68" ry="42" fill="#ffffff" opacity="0.2" transform="rotate(-25 185 158)"/>
 </svg>
 
-<!-- TOP BAR -->
 <div class="topbar">🔥 Envío a todo RD · <span>Usa WhatsApp para comprar directo</span> · Stock limitado</div>
 
-<!-- HEADER -->
 <header>
   <div class="header-inner">
     <a href="#" class="nav-logo" style="text-decoration:none;">
@@ -480,7 +464,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
   </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-text">
     <p class="hero-eyebrow">⚡ Temporada 2025 — Edición Limitada</p>
@@ -510,19 +493,12 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
         </radialGradient>
         <clipPath id="hclip"><circle cx="100" cy="100" r="94"/></clipPath>
       </defs>
-      <!-- sphere base -->
       <circle cx="100" cy="100" r="94" fill="url(#hballG)"/>
-      <!-- equator band -->
       <ellipse cx="100" cy="100" rx="94" ry="15" fill="#cc2200" opacity="0.45" clip-path="url(#hclip)"/>
-      <!-- vertical band -->
       <ellipse cx="100" cy="100" rx="15" ry="94" fill="#cc2200" opacity="0.3" clip-path="url(#hclip)"/>
-      <!-- diagonal band 1 -->
       <rect x="-20" y="86" width="240" height="20" rx="10" fill="#cc2200" opacity="0.28" transform="rotate(-38 100 100)" clip-path="url(#hclip)"/>
-      <!-- diagonal band 2 -->
       <rect x="-20" y="86" width="240" height="20" rx="10" fill="#cc2200" opacity="0.28" transform="rotate(38 100 100)" clip-path="url(#hclip)"/>
-      <!-- shadow -->
       <circle cx="100" cy="100" r="94" fill="url(#hshadG)"/>
-      <!-- 4 stars -->
       <g transform="translate(58,58)" fill="#cc0000" opacity="0.9">
         <polygon points="0,-10 2.4,-3.3 9.5,-3.3 4,2.5 5.9,9.5 0,5.5 -5.9,9.5 -4,2.5 -9.5,-3.3 -2.4,-3.3"/>
       </g>
@@ -535,21 +511,17 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
       <g transform="translate(140,138)" fill="#cc0000" opacity="0.9">
         <polygon points="0,-10 2.4,-3.3 9.5,-3.3 4,2.5 5.9,9.5 0,5.5 -5.9,9.5 -4,2.5 -9.5,-3.3 -2.4,-3.3"/>
       </g>
-      <!-- shine -->
       <circle cx="100" cy="100" r="94" fill="url(#hshineG)"/>
-      <!-- specular -->
       <ellipse cx="72" cy="58" rx="26" ry="16" fill="#fff" opacity="0.22" transform="rotate(-25 72 58)"/>
     </svg>
   </div>
 </section>
 
-<!-- COLLECTION HEADER -->
 <div class="collection-header" id="catalogo">
   <h2>Todos los Productos</h2>
   <p>Todos los productos de la tienda · <span id="total-count">0</span> artículos</p>
 </div>
 
-<!-- FILTERS -->
 <div class="filters-bar">
   <div class="filter-group">
     <button class="filter-btn active" onclick="filterCat('todos',this)">Todos</button>
@@ -566,12 +538,10 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
   </div>
 </div>
 
-<!-- PRODUCTS -->
 <div class="products-section">
   <div class="products-grid" id="products-grid"></div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div class="admin-section" id="admin">
   <div class="admin-title">Panel de Administración <span class="admin-badge">Uso Interno</span></div>
   <p class="admin-subtitle">Agrega nuevos productos al catálogo. Solo tú ves esta sección.</p>
@@ -606,7 +576,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     </div>
   </div>
 
-  <!-- PHOTO UPLOAD -->
   <div style="margin-bottom:20px;">
     <label style="display:block;font-size:10px;font-weight:700;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:10px;font-family:'Barlow Condensed',sans-serif;">
       📸 Fotos del Artículo (puedes subir varias)
@@ -623,7 +592,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
       <div style="color:#444;font-size:11px;margin-top:4px;">JPG, PNG, WEBP · Múltiples archivos permitidos</div>
     </div>
     <input type="file" id="a-photos" multiple accept="image/*" style="display:none" onchange="handlePhotoUpload(this.files)">
-    <!-- PREVIEW -->
     <div id="photo-preview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;"></div>
   </div>
 
@@ -634,7 +602,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
   <p class="admin-note">💡 Al publicar, el producto aparece de inmediato en el catálogo de arriba.<br>📋 Usa "Copiar Código" para pegar el array actualizado en tu archivo de GitHub y guardar los cambios permanentemente.<br>🗑️ Pasa el mouse sobre cualquier producto para ver el botón de eliminar.</p>
 </div>
 
-<!-- FOOTER -->
 <footer id="contacto">
   <div class="footer-grid">
     <div class="footer-logo-wrap">
@@ -676,7 +643,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
   </div>
 </footer>
 
-<!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal-box" id="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
@@ -690,7 +656,7 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
       <p class="modal-category" id="modal-cat"></p>
       <h3 class="modal-name" id="modal-name"></h3>
       <p class="modal-price" id="modal-price"></p>
-      <p class="modal-desc" id="modal-desc">Producto exclusivo de Capsule Store by Dragon Ball RD. Calidad premium, diseño original. Disponible en varios talles. ¡Cantidad limitada!</p>
+      <p class="modal-desc">Producto exclusivo de Capsule Store by Dragon Ball RD. Calidad premium, diseño original. Disponible en varios talles. ¡Cantidad limitada!</p>
       <a class="wha-btn" id="wha-btn" href="#" target="_blank">
         <span class="wha-icon">💬</span> Comprar por WhatsApp
       </a>
@@ -698,7 +664,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
   </div>
 </div>
 
-<!-- CART DRAWER -->
 <div class="cart-overlay-bg" id="cart-overlay-bg" onclick="toggleCart()"></div>
 <div class="cart-drawer" id="cart-drawer">
   <div class="cart-head">
@@ -715,7 +680,6 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -736,11 +700,39 @@ let cart = [];
 let nextId = 100;
 let currentCat = 'todos';
 let currentSort = '';
-let pendingPhotos = []; // base64 strings for new product
+let pendingPhotos = []; 
 let modalSlideIndex = 0;
 let modalSlides = [];
 
 const WHA_NUMBER = '18098787656';
+
+// ---- CONTROL DE CONTRASEÑA MODO ADMINISTRADOR ----
+function checkAdminPassword() {
+  const adminSection = document.getElementById('admin');
+  
+  // Si ya está abierto, lo cerramos de inmediato al pulsar de nuevo
+  if (adminSection.style.display === 'block') {
+    adminSection.style.display = 'none';
+    document.body.classList.remove('admin-active');
+    showToast('⚙️ Modo Administrador desactivado');
+    return;
+  }
+
+  // Petición de contraseña
+  const pass = prompt("Introduce la contraseña de administrador para modificar el catálogo:");
+  
+  // AQUÍ PUEDES CAMBIAR LA CONTRASEÑA DE ACCESO
+  if (pass === "admin123") {
+    adminSection.style.display = 'block';
+    document.body.classList.add('admin-active'); // Activa la visibilidad de los botones de borrado (✕)
+    showToast('🔓 Modo Administrador activo');
+    
+    // Desplazar la vista suavemente hasta la sección de administración recién abierta
+    adminSection.scrollIntoView({ behavior: 'smooth' });
+  } else if (pass !== null) {
+    showToast('❌ Contraseña incorrecta');
+  }
+}
 
 // ---- RENDER PRODUCTS ----
 function renderProducts(){
@@ -785,7 +777,6 @@ function sortProducts(val){currentSort=val;renderProducts();}
 function openModal(id){
   const p = products.find(x=>x.id===id); if(!p) return;
   modalSlideIndex = 0;
-  // Build slides array: photos first, then emoji as fallback
   modalSlides = (p.photos && p.photos.length > 0) ? p.photos : ['emoji:'+p.emoji];
 
   const slidesEl = document.getElementById('modal-slides');
@@ -796,7 +787,6 @@ function openModal(id){
       : `<div class="modal-slide"><img src="${s}" alt="${p.name}"></div>`
   ).join('');
 
-  // Thumbs
   const thumbsEl = document.getElementById('modal-thumbs');
   if(modalSlides.length > 1){
     thumbsEl.style.display = 'flex';
@@ -810,7 +800,6 @@ function openModal(id){
     thumbsEl.innerHTML = '';
   }
 
-  // Arrow buttons
   document.getElementById('cprev').style.display = modalSlides.length>1 ? 'flex' : 'none';
   document.getElementById('cnext').style.display = modalSlides.length>1 ? 'flex' : 'none';
 
@@ -828,6 +817,7 @@ function slideModal(dir){
   document.querySelectorAll('.modal-thumb').forEach((t,i)=>t.classList.toggle('active-thumb',i===modalSlideIndex));
 }
 
+// ---- AGREGADO PARA FUNCIONALIDAD DE MINIATURAS ----
 function goToSlide(i){
   modalSlideIndex = i;
   document.getElementById('modal-slides').style.transform = `translateX(-${i*100}%)`;
@@ -954,7 +944,7 @@ function publishProduct(){
   const newP={id:nextId++,name,price,emoji,cat,badge,photos:[...pendingPhotos]};
   products.unshift(newP);
   renderProducts();
-  // Reset form
+  
   document.getElementById('a-name').value='';
   document.getElementById('a-price').value='';
   document.getElementById('a-emoji').value='';
@@ -967,7 +957,6 @@ function publishProduct(){
 
 // ---- COPY CODE ----
 function copyCode(){
-  // Photos stored as base64 are too large for code; note that
   const code=`let products = [\n${products.map(p=>`  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[]}`).join(',\n')},\n];`;
   navigator.clipboard.writeText(code).then(()=>{
     showToast('📋 Código copiado — pégalo en tu archivo de GitHub');
@@ -984,7 +973,6 @@ function showToast(msg){
 
 renderProducts();
 </script>
-
 
 </body>
 </html>
