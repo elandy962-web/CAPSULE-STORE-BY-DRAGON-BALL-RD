@@ -559,8 +559,14 @@ async function sha256(msg) {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  PRODUCTOS — se guardan en localStorage para que persistan
+//  BASE DE DATOS EN LA NUBE — JSONBin.io
+//  Los productos se guardan aquí y son visibles desde
+//  CUALQUIER dispositivo en el mundo
 // ═══════════════════════════════════════════════════════════
+const JSONBIN_ID  = '6a1dfa40da38895dfe7888a4';
+const JSONBIN_KEY = '$2a$10$mMZB6n/JYJY1r80kMx9U9OSkMuA6Jj7NmoeYJwvPZi2nTo8KY.5ma';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
 const DEFAULT_PRODUCTS = [
   {id:1,name:"Memoria USB Dragon Ball Z",price:3500,emoji:"💾",cat:"accesorios",badge:"agotado",photos:[]},
   {id:2,name:"T-Shirt Goku y Vegeta",price:1000,emoji:"👕",cat:"camisetas",badge:"nuevo",photos:[]},
@@ -572,19 +578,52 @@ const DEFAULT_PRODUCTS = [
   {id:8,name:"Gorra Bordada Logo",price:900,emoji:"🧢",cat:"accesorios",badge:"",photos:[]},
 ];
 
-function loadProducts() {
+// Cargar productos desde JSONBin (nube)
+async function loadProducts() {
   try {
-    const saved = localStorage.getItem('capsule_products');
-    return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
-  } catch(e) { return DEFAULT_PRODUCTS; }
-}
-function saveProducts() {
-  try { localStorage.setItem('capsule_products', JSON.stringify(products)); } catch(e) {}
+    showLoadingOverlay(true);
+    const res = await fetch(JSONBIN_URL + '/latest', {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await res.json();
+    const loaded = data.record && data.record.products && data.record.products.length > 0
+      ? data.record.products
+      : DEFAULT_PRODUCTS;
+    showLoadingOverlay(false);
+    return loaded;
+  } catch(e) {
+    showLoadingOverlay(false);
+    console.error('Error cargando productos:', e);
+    return DEFAULT_PRODUCTS;
+  }
 }
 
-let products = loadProducts();
+// Guardar productos en JSONBin (nube) — todos los dispositivos verán los cambios
+async function saveProducts() {
+  try {
+    await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify({ products })
+    });
+  } catch(e) {
+    console.error('Error guardando productos:', e);
+    showToast('⚠️ Error al guardar en la nube. Revisa tu conexión.');
+  }
+}
+
+function showLoadingOverlay(show) {
+  let el = document.getElementById('loading-overlay');
+  if (!el) return;
+  el.style.display = show ? 'flex' : 'none';
+}
+
+let products = [];
 let cart = [];
-let nextId = Math.max(...products.map(p=>p.id), 99) + 1;
+let nextId = 100;
 let currentCat = 'todos';
 let modalSlideIndex = 0;
 let modalSlides = [];
@@ -733,7 +772,7 @@ function removeUploadedPhoto(id, url) {
 }
 
 // Drag & drop
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const dz = document.getElementById('dropzone');
   dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
   dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
@@ -741,14 +780,18 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault(); dz.classList.remove('dragover');
     processFiles(e.dataTransfer.files);
   });
+
+  // Cargar productos desde la nube
+  products = await loadProducts();
+  nextId = Math.max(...products.map(p=>p.id), 99) + 1;
   renderProducts();
   updateCartUI();
 });
 
 // ═══════════════════════════════════════════════════════════
-//  PUBLICAR PRODUCTO
+//  PUBLICAR PRODUCTO — guarda en la nube (JSONBin)
 // ═══════════════════════════════════════════════════════════
-function publishProduct() {
+async function publishProduct() {
   const name  = document.getElementById('a-name').value.trim();
   const price = parseInt(document.getElementById('a-price').value);
   const emoji = document.getElementById('a-emoji').value.trim() || '📦';
@@ -756,9 +799,17 @@ function publishProduct() {
   const badge = document.getElementById('a-badge').value;
   if (!name || !price) { showToast('⚠️ Completa nombre y precio'); return; }
 
+  // Verificar que todas las fotos terminaron de subir a Cloudinary
+  const stillUploading = document.querySelectorAll('#photo-preview .preview-item').length !== uploadedPhotos.length;
+  if (stillUploading) { showToast('⏳ Espera que terminen de subir las fotos'); return; }
+
+  const btn = document.querySelector('.publish-btn');
+  btn.textContent = '⏳ Guardando en la nube...';
+  btn.disabled = true;
+
   const newP = { id: nextId++, name, price, emoji, cat, badge, photos: uploadedPhotos.map(p=>p.url) };
   products.unshift(newP);
-  saveProducts();
+  await saveProducts();
   renderProducts();
 
   document.getElementById('a-name').value = '';
@@ -766,9 +817,12 @@ function publishProduct() {
   document.getElementById('a-emoji').value = '';
   document.getElementById('a-badge').value = '';
   document.getElementById('file-input').value = '';
+  document.getElementById('photo-preview').innerHTML = '';
   uploadedPhotos = [];
-  renderPhotoPreview();
-  showToast('✅ ¡Producto publicado con éxito!');
+
+  btn.textContent = '✅ Publicar Producto';
+  btn.disabled = false;
+  showToast('🌐 ¡Producto publicado! Visible para todos en el mundo.');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -907,15 +961,15 @@ function toggleCart() {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  ELIMINAR PRODUCTO
+//  ELIMINAR PRODUCTO — actualiza la nube
 // ═══════════════════════════════════════════════════════════
-function deleteProduct(id, e) {
+async function deleteProduct(id, e) {
   e && e.stopPropagation();
   if (confirm('¿Seguro que deseas eliminar este producto?')) {
     products = products.filter(p=>p.id!==id);
-    saveProducts();
+    await saveProducts();
     renderProducts();
-    showToast('🗑️ Producto eliminado');
+    showToast('🗑️ Producto eliminado de la nube');
   }
 }
 
@@ -923,21 +977,43 @@ function deleteProduct(id, e) {
 //  COPIAR CÓDIGO
 // ═══════════════════════════════════════════════════════════
 function copyCode() {
-  const code = `const DEFAULT_PRODUCTS = [\n${products.map(p=>{
-    const photosStr = p.photos && p.photos.length ? p.photos.map(u=>`"${u.substring(0,60)}..."`).join(',') : '';
-    return `  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[/* ${p.photos?p.photos.length:0} foto(s) guardada(s) en localStorage */]}`;
+  const code = `// Catálogo actual — ${products.length} productos\n// Fotos alojadas en Cloudinary (visibles globalmente)\nconst DEFAULT_PRODUCTS = [\n${products.map(p=>{
+    const photosStr = p.photos && p.photos.length ? p.photos.map(u=>`"${u}"`).join(',') : '';
+    return `  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[${photosStr}]}`;
   }).join(',\n')}\n];`;
   navigator.clipboard.writeText(code).then(()=>{
-    showToast('📋 Código copiado. Nota: las fotos quedan guardadas en tu navegador.');
+    showToast('📋 Código copiado con enlaces de Cloudinary incluidos.');
   }).catch(()=>{ prompt('Copia esto manualmente:', code); });
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'), 3500);
 }
 </script>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="animation:spin 1.2s linear infinite;">
+    <defs>
+      <radialGradient id="lg" cx="36%" cy="30%" r="68%">
+        <stop offset="0%" stop-color="#FFE566"/>
+        <stop offset="50%" stop-color="#FF6B00"/>
+        <stop offset="100%" stop-color="#7B0000"/>
+      </radialGradient>
+    </defs>
+    <circle cx="40" cy="40" r="36" fill="url(#lg)"/>
+    <ellipse cx="40" cy="40" rx="36" ry="6" fill="#cc2200" opacity="0.4"/>
+    <ellipse cx="40" cy="40" rx="6" ry="36" fill="#cc2200" opacity="0.3"/>
+    <g transform="translate(24,24)" fill="#cc0000" opacity="0.9"><polygon points="0,-8 1.9,-2.6 7.6,-2.6 3.2,2 4.7,7.6 0,4.4 -4.7,7.6 -3.2,2 -7.6,-2.6 -1.9,-2.6"/></g>
+    <g transform="translate(56,22)" fill="#cc0000" opacity="0.9"><polygon points="0,-8 1.9,-2.6 7.6,-2.6 3.2,2 4.7,7.6 0,4.4 -4.7,7.6 -3.2,2 -7.6,-2.6 -1.9,-2.6"/></g>
+    <g transform="translate(26,57)" fill="#cc0000" opacity="0.9"><polygon points="0,-8 1.9,-2.6 7.6,-2.6 3.2,2 4.7,7.6 0,4.4 -4.7,7.6 -3.2,2 -7.6,-2.6 -1.9,-2.6"/></g>
+    <g transform="translate(56,55)" fill="#cc0000" opacity="0.9"><polygon points="0,-8 1.9,-2.6 7.6,-2.6 3.2,2 4.7,7.6 0,4.4 -4.7,7.6 -3.2,2 -7.6,-2.6 -1.9,-2.6"/></g>
+  </svg>
+  <p style="color:#fff;font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;">CARGANDO CATÁLOGO...</p>
+  <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+</div>
 
 <!-- LOGIN MODAL ADMINISTRADOR -->
 <div class="login-modal" id="login-modal">
