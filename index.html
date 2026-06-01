@@ -437,7 +437,7 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
     </label>
     <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
       <span>📁 Haz clic para buscar fotos o arrástralas aquí</span>
-      <p>Se subirán automáticamente a internet para generar sus enlaces finales</p>
+      <p>Se guardarán de manera masiva y local en la base de datos de tu navegador</p>
       <input type="file" id="file-input" multiple accept="image/*" onchange="handleFileSelect(event)">
     </div>
     <div class="photo-preview-grid" id="photo-preview"></div>
@@ -489,27 +489,110 @@ footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative
 <div class="toast" id="toast"></div>
 
 <script>
-// API KEY CONFIGURADA
-const FREEIMAGE_API_KEY = "6d207e02198a847aa98d0a2a901485a5"; 
-
-// ===== ARREGLO DE PRODUCTOS =====
-let products = [
+// INITIAL SEED DATA
+const defaultProducts = [
   {id:1,name:"Memoria USB Dragon Ball Z",price:3500,emoji:"💾",cat:"accesorios",badge:"agotado",photos:[]},
+  {id:2,name:"T-Shirt Goku y Vegeta",price:1000,emoji:"👕",cat:"camisetas",badge:"nuevo",photos:[]},
   {id:3,name:"T-Shirt Blanca Saga Dragon Ball",price:1000,emoji:"👕",cat:"camisetas",badge:"",photos:[]},
   {id:4,name:"Abrigo Dragón Ball Súper",price:2500,emoji:"🧥",cat:"abrigos",badge:"nuevo",photos:[]},
   {id:5,name:"Abrigo Goku Dragon Ball Z",price:2500,emoji:"🧥",cat:"abrigos",badge:"",photos:[]},
   {id:6,name:"T-Shirt Amarilla Logo Z",price:1000,emoji:"👕",cat:"camisetas",badge:"",photos:[]},
+  {id:7,name:"Hoodie Rojo Vegeta",price:2200,emoji:"🧥",cat:"abrigos",badge:"nuevo",photos:[]},
   {id:8,name:"Gorra Bordada Logo",price:900,emoji:"🧢",cat:"accesorios",badge:"",photos:[]},
 ];
 
+let products = [];
 let cart = [];
 let nextId = 100;
 let currentCat = 'todos';
 let modalSlideIndex = 0;
 let modalSlides = [];
-let uploadedPhotos = []; 
+let uploadedPhotos = []; // Guardará strings en formato Base64 o claves identificadoras locales
 
 const WHA_NUMBER = '18098787656';
+
+// ==========================================
+// CONFIGURACIÓN DE INDEXEDDB PARA LAS IMÁGENES
+// ==========================================
+let db;
+const dbName = "CapsuleStoreDB";
+const storeName = "productImages";
+
+function initIndexedDB(callback) {
+  const request = indexedDB.open(dbName, 1);
+  
+  request.onupgradeneeded = function(e) {
+    const database = e.target.result;
+    if (!database.objectStoreNames.contains(storeName)) {
+      database.createObjectStore(storeName, { keyPath: "id" });
+    }
+  };
+  
+  request.onsuccess = function(e) {
+    db = e.target.result;
+    if (callback) callback();
+  };
+  
+  request.onerror = function(e) {
+    console.error("Error inicializando IndexedDB:", e.target.error);
+    showToast("⚠️ Falló el almacenamiento interno avanzado.");
+  };
+}
+
+function saveImageToDB(id, base64Data) {
+  if (!db) return;
+  const transaction = db.transaction([storeName], "readwrite");
+  const store = transaction.objectStore(storeName);
+  store.put({ id: id, data: base64Data });
+}
+
+function deleteImageFromDB(id) {
+  if (!db) return;
+  const transaction = db.transaction([storeName], "readwrite");
+  const store = transaction.objectStore(storeName);
+  store.delete(id);
+}
+
+function getImageFromDB(id, callback) {
+  if (!db) { callback(null); return; }
+  const transaction = db.transaction([storeName], "readonly");
+  const store = transaction.objectStore(storeName);
+  const request = store.get(id);
+  
+  request.onsuccess = function(e) {
+    callback(e.target.result ? e.target.result.data : null);
+  };
+  request.onerror = function() {
+    callback(null);
+  };
+}
+
+// ==========================================
+// CARGA Y PERSISTENCIA DE PRODUCTOS (localStorage)
+// ==========================================
+function loadProducts() {
+  const localData = localStorage.getItem('capsule_products');
+  const localNextId = localStorage.getItem('capsule_nextid');
+  
+  if (localData) {
+    products = JSON.parse(localData);
+  } else {
+    products = [...defaultProducts];
+    localStorage.setItem('capsule_products', JSON.stringify(products));
+  }
+  
+  if (localNextId) {
+    nextId = parseInt(localNextId);
+  } else {
+    nextId = 100;
+    localStorage.setItem('capsule_nextid', nextId);
+  }
+}
+
+function saveProductsState() {
+  localStorage.setItem('capsule_products', JSON.stringify(products));
+  localStorage.setItem('capsule_nextid', nextId);
+}
 
 function checkAdminPassword() {
   const adminSection = document.getElementById('admin');
@@ -526,53 +609,40 @@ function checkAdminPassword() {
   }
 }
 
-// ---- MANEJO DE ARCHIVOS Y CARGA EN LÍNEA ----
+// ---- PROCESAMIENTO LOCAL DE IMÁGENES ----
 function handleFileSelect(event) {
   const files = event.target.files;
   if (!files.length) return;
   for (let i = 0; i < files.length; i++) {
-    uploadFileToWeb(files[i]);
+    processFileLocally(files[i]);
   }
 }
 
-function uploadFileToWeb(file) {
+function processFileLocally(file) {
   const previewContainer = document.getElementById('photo-preview');
-  const tempId = 'upload-' + Math.random().toString(36).substr(2, 9);
+  const tempId = 'local-' + Math.random().toString(36).substr(2, 9);
   
   const item = document.createElement('div');
   item.className = 'preview-item';
   item.id = tempId;
-  item.innerHTML = `<div class="preview-loading">Subiendo...</div>`;
+  item.innerHTML = `<div class="preview-loading">Cargando...</div>`;
   previewContainer.appendChild(item);
 
-  const formData = new FormData();
-  formData.append('key', FREEIMAGE_API_KEY);
-  formData.append('image', file);
-
-  fetch('https://freeimage.host/api/1/upload', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data && data.image && data.image.url) {
-      const finalUrl = data.image.url;
-      uploadedPhotos.push(finalUrl);
-      
-      document.getElementById(tempId).innerHTML = `
-        <img src="${finalUrl}">
-        <button onclick="removeUploadedPhoto('${finalUrl}', '${tempId}')" style="position:absolute;top:0;right:0;background:red;color:white;border:none;cursor:pointer;width:16px;height:16px;font-size:10px;z-index:10;">✕</button>
-      `;
-    } else {
-      document.getElementById(tempId).remove();
-      showToast('❌ Error al procesar imagen');
-    }
-  })
-  .catch(err => {
-    console.error(err);
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64Url = e.target.result;
+    uploadedPhotos.push(base64Url);
+    
+    document.getElementById(tempId).innerHTML = `
+      <img src="${base64Url}">
+      <button onclick="removeUploadedPhoto('${base64Url}', '${tempId}')" style="position:absolute;top:0;right:0;background:red;color:white;border:none;cursor:pointer;width:16px;height:16px;font-size:10px;z-index:10;">✕</button>
+    `;
+  };
+  reader.onerror = function() {
     document.getElementById(tempId).remove();
-    showToast('❌ Error de red al subir la imagen');
-  });
+    showToast('❌ Error al procesar imagen local.');
+  };
+  reader.readAsDataURL(file); // Convierte a Data URL local
 }
 
 function removeUploadedPhoto(url, elementId) {
@@ -588,7 +658,7 @@ dropzone.addEventListener('drop', (e) => {
   dropzone.classList.remove('dragover');
   const files = e.dataTransfer.files;
   if(files.length) {
-    for (let i = 0; i < files.length; i++) { uploadFileToWeb(files[i]); }
+    for (let i = 0; i < files.length; i++) { processFileLocally(files[i]); }
   }
 });
 
@@ -602,8 +672,21 @@ function publishProduct(){
 
   if(!name||!price){showToast('⚠️ Completa nombre y precio');return;}
   
-  const newP={id:nextId++,name,price,emoji,cat,badge,photos:[...uploadedPhotos]};
+  const productId = nextId++;
+  const imageKeys = [];
+  
+  // Guardamos los datos pesados de la imagen en IndexedDB vinculados a una ID única
+  uploadedPhotos.forEach((base64Data, index) => {
+    const uniqueImgKey = `img-${productId}-${index}`;
+    saveImageToDB(uniqueImgKey, base64Data);
+    imageKeys.push(uniqueImgKey);
+  });
+  
+  // En el arreglo de productos mapeado en localStorage solo guardamos las claves identificadoras de las fotos
+  const newP={id:productId,name,price,emoji,cat,badge,photos:imageKeys, localImage: true};
   products.unshift(newP);
+  
+  saveProductsState();
   renderProducts();
   
   document.getElementById('a-name').value='';
@@ -612,35 +695,70 @@ function publishProduct(){
   document.getElementById('a-badge').value='';
   document.getElementById('photo-preview').innerHTML='';
   uploadedPhotos = [];
-  showToast('✅ ¡Producto publicado con éxito!');
+  showToast('✅ ¡Producto guardado localmente en tu navegador!');
 }
 
 // ---- MOSTRAR PRODUCTOS ----
 function renderProducts(){
   let list = currentCat==='todos' ? [...products] : products.filter(p=>p.cat===currentCat);
   document.getElementById('total-count').textContent = products.length;
-  document.getElementById('products-grid').innerHTML = list.map(p=>{
-    const hasPhoto = p.photos && p.photos.length > 0;
-    const imgHTML = hasPhoto
-      ? `<img src="${p.photos[0]}" style="width:100%;height:100%;object-fit:cover;" alt="${p.name}">`
-      : `<span style="font-size:90px;">${p.emoji}</span>`;
-    return `
-    <div class="product-card" onclick="openModal(${p.id})">
+  
+  const container = document.getElementById('products-grid');
+  container.innerHTML = ''; // Limpiamos contenedor para inyección asíncrona
+  
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.setAttribute('onclick', `openModal(${p.id})`);
+    
+    // Armazón base estructurado de la tarjeta
+    card.innerHTML = `
       <button class="delete-btn" onclick="deleteProduct(${p.id},event)" title="Eliminar">✕</button>
-      <div class="product-img-wrap">
-        ${imgHTML}
-        ${p.badge==='agotado'?'<div class="badge-agotado">Agotado</div>':''}
-        ${p.badge==='nuevo'?'<div class="badge-nuevo">Nuevo</div>':''}
-        <div class="product-overlay">
-          ${p.badge!=='agotado'?`<button class="quick-add-btn" onclick="addCart(${p.id},event)">+ Agregar al carrito</button>`:''}
-        </div>
+      <div class="product-img-wrap" id="img-wrap-${p.id}">
+        <span style="font-size:90px;">${p.emoji}</span>
       </div>
       <div class="product-info">
         <p class="product-name">${p.name}</p>
         <p class="product-price">RD$ ${p.price.toLocaleString('es-DO')}.00</p>
       </div>
-    </div>`;
-  }).join('');
+    `;
+    
+    container.appendChild(card);
+    
+    // Inyección asíncrona de las imágenes persistidas desde IndexedDB o el marcador clásico de estados
+    const imgWrap = document.getElementById(`img-wrap-${p.id}`);
+    
+    if (p.photos && p.photos.length > 0) {
+      if (p.localImage) {
+        // Obtenemos de la base de datos local la primera imagen asignada
+        getImageFromDB(p.photos[0], function(base64Data) {
+          if (base64Data) {
+            imgWrap.innerHTML = `<img src="${base64Data}" style="width:100%;height:100%;object-fit:cover;" alt="${p.name}">`;
+          }
+          appendBadgesAndOverlay(p, imgWrap);
+        });
+      } else {
+        // Soporte estándar si contiene URLs tradicionales de producción
+        imgWrap.innerHTML = `<img src="${p.photos[0]}" style="width:100%;height:100%;object-fit:cover;" alt="${p.name}">`;
+        appendBadgesAndOverlay(p, imgWrap);
+      }
+    } else {
+      appendBadgesAndOverlay(p, imgWrap);
+    }
+  });
+}
+
+function appendBadgesAndOverlay(p, element) {
+  let extraHTML = '';
+  if(p.badge==='agotado') extraHTML += '<div class="badge-agotado">Agotado</div>';
+  if(p.badge==='nuevo') extraHTML += '<div class="badge-nuevo">Nuevo</div>';
+  
+  extraHTML += `
+    <div class="product-overlay">
+      ${p.badge!=='agotado'?`<button class="quick-add-btn" onclick="addCart(${p.id},event)">+ Agregar al carrito</button>`:''}
+    </div>
+  `;
+  element.insertAdjacentHTML('beforeend', extraHTML);
 }
 
 function filterCat(cat,btn){
@@ -654,36 +772,63 @@ function filterCat(cat,btn){
 function openModal(id){
   const p = products.find(x=>x.id===id); if(!p) return;
   modalSlideIndex = 0;
-  modalSlides = (p.photos && p.photos.length > 0) ? p.photos : ['emoji:'+p.emoji];
-
+  
   const slidesEl = document.getElementById('modal-slides');
-  slidesEl.style.transform = 'translateX(0)';
-  slidesEl.innerHTML = modalSlides.map(s =>
-    s.startsWith('emoji:')
-      ? `<div class="modal-slide"><span class="slide-emoji">${s.slice(6)}</span></div>`
-      : `<div class="modal-slide"><img src="${s}" alt="${p.name}"></div>`
-  ).join('');
-
   const thumbsEl = document.getElementById('modal-thumbs');
-  if(modalSlides.length > 1){
-    thumbsEl.style.display = 'flex';
-    thumbsEl.innerHTML = modalSlides.map((s,i) =>
-      s.startsWith('emoji:')
-        ? `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})">${s.slice(6)}</div>`
-        : `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})"><img src="${s}"></div>`
-    ).join('');
-  } else {
-    thumbsEl.style.display = 'none';
-  }
-
-  document.getElementById('cprev').style.display = modalSlides.length>1 ? 'flex' : 'none';
-  document.getElementById('cnext').style.display = modalSlides.length>1 ? 'flex' : 'none';
-
+  slidesEl.style.transform = 'translateX(0)';
+  
   document.getElementById('modal-cat').textContent = p.cat.toUpperCase();
   document.getElementById('modal-name').textContent = p.name;
   document.getElementById('modal-price').textContent = 'RD$ '+p.price.toLocaleString('es-DO')+'.00';
   const msg = encodeURIComponent(`¡Hola! Me interesa este artículo: ${p.name}`);
   document.getElementById('wha-btn').href = `https://wa.me/${WHA_NUMBER}?text=${msg}`;
+
+  if (p.photos && p.photos.length > 0) {
+    modalSlides = [...p.photos];
+    
+    // Si son referencias de IndexedDB, cargamos de forma asíncrona todas las diapositivas
+    let loadedCount = 0;
+    const resolvedSlides = new Array(modalSlides.length);
+    
+    modalSlides.forEach((photoKey, index) => {
+      if (p.localImage) {
+        getImageFromDB(photoKey, function(base64Data) {
+          resolvedSlides[index] = base64Data || '';
+          loadedCount++;
+          if (loadedCount === modalSlides.length) buildModalSlidesDOM(p, resolvedSlides, thumbsEl, slidesEl);
+        });
+      } else {
+        resolvedSlides[index] = photoKey;
+        loadedCount++;
+        if (loadedCount === modalSlides.length) buildModalSlidesDOM(p, resolvedSlides, thumbsEl, slidesEl);
+      }
+    });
+  } else {
+    modalSlides = ['emoji:'+p.emoji];
+    slidesEl.innerHTML = `<div class="modal-slide"><span class="slide-emoji">${p.emoji}</span></div>`;
+    thumbsEl.style.display = 'none';
+    document.getElementById('cprev').style.display = 'none';
+    document.getElementById('cnext').style.display = 'none';
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+}
+
+function buildModalSlidesDOM(p, resolvedSources, thumbsEl, slidesEl) {
+  slidesEl.innerHTML = resolvedSources.map(src => 
+    `<div class="modal-slide"><img src="${src}" alt="${p.name}"></div>`
+  ).join('');
+
+  if(resolvedSources.length > 1){
+    thumbsEl.style.display = 'flex';
+    thumbsEl.innerHTML = resolvedSources.map((src, i) =>
+      `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})"><img src="${src}"></div>`
+    ).join('');
+  } else {
+    thumbsEl.style.display = 'none';
+  }
+
+  document.getElementById('cprev').style.display = resolvedSources.length>1 ? 'flex' : 'none';
+  document.getElementById('cnext').style.display = resolvedSources.length>1 ? 'flex' : 'none';
   document.getElementById('modal-overlay').classList.add('open');
 }
 
@@ -714,25 +859,44 @@ function addCart(id,e){
   updateCartUI();
   showToast('✅ Artículo agregado');
 }
+
 function updateCartUI(){
   const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
   document.getElementById('cart-total').textContent='RD$ '+total.toLocaleString('es-DO');
   document.getElementById('cart-count').textContent=cart.reduce((s,i)=>s+i.qty,0);
   const body=document.getElementById('cart-body');
   if(!cart.length){ body.innerHTML='<p style="text-align:center;color:#888;margin-top:40px;">El carrito está vacío</p>'; return; }
-  body.innerHTML=cart.map(item=>`
-    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:center;">
-      <div style="width:45px;height:45px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-        ${item.photos&&item.photos.length?`<img src="${item.photos[0]}" style="width:100%;height:100%;object-fit:cover;">`:`<span style="font-size:20px;">${item.emoji}</span>`}
+  
+  body.innerHTML = '';
+  cart.forEach(item => {
+    const itemEl = document.createElement('div');
+    itemEl.style = "display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:center;";
+    
+    itemEl.innerHTML = `
+      <div style="width:45px;height:45px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;" id="cart-item-img-${item.id}">
+        <span style="font-size:20px;">${item.emoji}</span>
       </div>
       <div style="flex:1;">
         <p style="font-weight:600;font-size:12px;text-transform:uppercase;">${item.name}</p>
         <p style="color:#666;font-size:11px;">${item.qty} x RD$ ${item.price.toLocaleString('es-DO')}</p>
       </div>
       <button onclick="removeCart(${item.id})" style="background:none;border:none;color:#999;cursor:pointer;font-size:11px;text-decoration:underline;">Quitar</button>
-    </div>
-  `).join('');
+    `;
+    body.appendChild(itemEl);
+    
+    const imgContainer = document.getElementById(`cart-item-img-${item.id}`);
+    if (item.photos && item.photos.length > 0) {
+      if (item.localImage) {
+        getImageFromDB(item.photos[0], function(base64Data) {
+          if (base64Data) imgContainer.innerHTML = `<img src="${base64Data}" style="width:100%;height:100%;object-fit:cover;">`;
+        });
+      } else {
+        imgContainer.innerHTML = `<img src="${item.photos[0]}" style="width:100%;height:100%;object-fit:cover;">`;
+      }
+    }
+  });
 }
+
 function removeCart(id){
   cart=cart.filter(x=>x.id!==id);
   updateCartUI();
@@ -749,22 +913,31 @@ function toggleCart(){
   document.getElementById('cart-drawer').classList.toggle('open');
   document.getElementById('cart-overlay-bg').classList.toggle('open');
 }
+
 function deleteProduct(id,e){
   e&&e.stopPropagation();
-  if(confirm('¿Seguro que deseas eliminar este producto?')) { products=products.filter(p=>p.id!==id); renderProducts(); }
+  if(confirm('¿Seguro que deseas eliminar este producto?')) { 
+    const p = products.find(x => x.id === id);
+    if (p && p.localImage && p.photos) {
+      p.photos.forEach(photoKey => deleteImageFromDB(photoKey));
+    }
+    products=products.filter(p=>p.id!==id); 
+    saveProductsState();
+    renderProducts(); 
+  }
 }
 
-// ---- COPIAR CÓDIGO CON LAS IMÁGENES REALES ----
+// ---- COPIAR CÓDIGO ACTUALIZADO ----
 function copyCode(){
   const code=`let products = [\n${products.map(p=>{
-    const photosStr = p.photos && p.photos.length ? p.photos.map(url=>`"${url}"`).join(',') : '';
+    const photosStr = p.photos && p.photos.length ? p.photos.map(url=>`"${url.startsWith('data:') ? '[IMAGEN_LOCAL_BASE64]' : url}"`).join(',') : '';
     return `  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[${photosStr}]}`;
   }).join(',\n')},\n];`;
   
   navigator.clipboard.writeText(code).then(()=>{
-    showToast('📋 Código copiado con enlaces incluidos. Pégalo en tu GitHub.');
+    showToast('📋 Estructura de código copiada con éxito.');
   }).catch(()=>{
-    prompt('Error al usar el portapapeles. Copia esto de forma manual:', code);
+    prompt('Copia esto de forma manual:', code);
   });
 }
 
@@ -774,7 +947,11 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-renderProducts();
+// Inicialización coordinada de bases de datos y renderizado inicial
+initIndexedDB(function() {
+  loadProducts();
+  renderProducts();
+});
 </script>
 </body>
 </html>
