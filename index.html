@@ -1,833 +1,956 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capsule Store — By Dragon Ball RD</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --bg-primary: #0a0b0e;
-      --bg-card: #12141c;
-      --orange-main: #ff6b00;
-      --orange-hover: #e05e00;
-      --text-white: #ffffff;
-      --text-gray: #8a8f98;
-      --border-color: #1f2330;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-white);
-      overflow-x: hidden;
-    }
-
-    header {
-      background-color: rgba(10, 11, 14, 0.95);
-      border-bottom: 1px solid var(--border-color);
-      padding: 15px 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      backdrop-filter: blur(10px);
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-icon {
-      color: var(--orange-main);
-      font-size: 24px;
-    }
-
-    .logo-text {
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: 1px;
-    }
-
-    .logo-text span {
-      color: var(--orange-main);
-    }
-
-    .cart-icon-container {
-      position: relative;
-      cursor: pointer;
-      background: var(--border-color);
-      width: 45px;
-      height: 45px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      transition: 0.3s;
-    }
-
-    .cart-icon-container:hover {
-      background: var(--orange-main);
-    }
-
-    .cart-count {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background-color: #ff3b30;
-      color: white;
-      font-size: 11px;
-      font-weight: bold;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .hero {
-      padding: 60px 5%;
-      background: radial-gradient(circle at top right, rgba(255, 107, 0, 0.08), transparent 50%);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .hero-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-
-    .hero-text {
-      flex: 1;
-      min-width: 290px;
-    }
-
-    .hero-eyebrow {
-      color: var(--orange-main);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .hero h1 {
-      font-size: 42px;
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 15px;
-    }
-
-    .hero h1 span {
-      color: var(--orange-main);
-    }
-
-    .hero p {
-      color: var(--text-gray);
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 25px;
-      max-width: 550px;
-    }
-
-    .btn-hero-primary {
-      display: inline-block;
-      background-color: var(--orange-main);
-      color: white;
-      padding: 12px 30px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    .btn-hero-primary:hover {
-      background-color: var(--orange-hover);
-      transform: translateY(-2px);
-    }
-
-    .hero-image-container {
-      flex: 1;
-      min-width: 280px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    .hero-glow {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(255,107,0,0.2) 0%, rgba(0,0,0,0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .hero-img {
-      width: 100%;
-      max-width: 280px;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
-    }
-
-    .main-layout {
-      padding: 40px 5%;
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 30px;
-    }
-
-    @media (max-width: 900px) {
-      .main-layout {
-        grid-template-columns: 1fr;
-      }
-      .hero h1 { font-size: 32px; }
-    }
-
-    .filter-sidebar {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      height: fit-content;
-    }
-
-    .filter-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 15px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
-    }
-
-    .cat-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .cat-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-gray);
-      text-align: left;
-      padding: 10px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: 0.2s;
-    }
-
-    .cat-btn:hover, .cat-btn.active {
-      background-color: var(--border-color);
-      color: var(--text-white);
-    }
-
-    .cat-btn.active {
-      border-left: 3px solid var(--orange-main);
-    }
-
-    .catalog-section h2 {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 20px;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 25px;
-    }
-
-    .product-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: transform 0.3s, border-color 0.3s;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(255, 107, 0, 0.4);
-    }
-
-    .badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background-color: var(--orange-main);
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 4px;
-      z-index: 10;
-      text-transform: uppercase;
-    }
-
-    /* SISTEMA DE CARRUSEL EN LA TARJETA */
-    .carousel-container {
-      position: relative;
-      width: 100%;
-      padding-top: 100%; /* Aspect ratio 1:1 */
-      background-color: #171a26;
-      overflow: hidden;
-    }
-
-    .carousel-track {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .carousel-slide {
-      min-width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .carousel-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      color: white;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      z-index: 5;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .product-card:hover .carousel-btn {
-      opacity: 1;
-    }
-
-    .carousel-btn-prev { left: 8px; }
-    .carousel-btn-next { right: 8px; }
-
-    .carousel-dots {
-      position: absolute;
-      bottom: 10px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      z-index: 5;
-    }
-
-    .carousel-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.4);
-      transition: 0.2s;
-    }
-
-    .carousel-dot.active {
-      background: var(--orange-main);
-      width: 12px;
-      border-radius: 3px;
-    }
-
-    .product-info {
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .product-name {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text-white);
-      line-height: 1.4;
-    }
-
-    .product-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: auto;
-      padding-top: 10px;
-    }
-
-    .product-price {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--orange-main);
-    }
-
-    .add-to-cart-btn {
-      background-color: var(--border-color);
-      color: var(--text-white);
-      border: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .add-to-cart-btn:hover {
-      background-color: var(--orange-main);
-    }
-
-    /* CARRITO DE COMPRAS DESPLEGABLE */
-    .cart-sidebar {
-      position: fixed;
-      top: 0;
-      right: -380px;
-      width: 380px;
-      height: 100%;
-      background-color: var(--bg-card);
-      border-left: 1px solid var(--border-color);
-      z-index: 2000;
-      box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-      transition: right 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .cart-sidebar.open {
-      right: 0;
-    }
-
-    .cart-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .cart-close-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-gray);
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .cart-items-list {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .cart-item {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-    }
-
-    .cart-item-img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .cart-item-detail {
-      flex-grow: 1;
-    }
-
-    .cart-item-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .cart-item-price {
-      color: var(--orange-main);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .cart-item-remove {
-      background: transparent;
-      border: none;
-      color: #ff3b30;
-      cursor: pointer;
-    }
-
-    .cart-footer {
-      padding: 20px;
-      border-top: 1px solid var(--border-color);
-      background-color: rgba(10, 11, 14, 0.4);
-    }
-
-    .cart-total-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
-
-    .order-whatsapp-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      background-color: #25d366;
-      color: white;
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      text-align: center;
-      transition: 0.2s;
-    }
-
-    .order-whatsapp-btn:hover {
-      background-color: #1ebd58;
-    }
-
-    .cart-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      z-index: 1500;
-      display: none;
-    }
-
-    .cart-overlay.open {
-      display: block;
-    }
-
-    footer {
-      background-color: var(--bg-card);
-      border-top: 1px solid var(--border-color);
-      padding: 30px;
-      text-align: center;
-      color: var(--text-gray);
-      font-size: 14px;
-      margin-top: 60px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capsule Store by Dragon Ball RD</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --black:#0a0a0a;--white:#ffffff;--orange:#FF6B00;--yellow:#FFD700;
+  --gray:#888;--light:#f5f5f5;--border:#e0e0e0;
+}
+body{font-family:'Inter',sans-serif;background:#fff;color:#111;font-size:14px;overflow-x:hidden;}
+
+/* DRAGON BALL WATERMARK */
+.db-watermark-svg{
+  position:fixed;bottom:-120px;right:-120px;width:520px;height:520px;
+  opacity:0.04;pointer-events:none;z-index:0;
+}
+
+/* TOP BAR */
+.topbar{
+  background:var(--black);color:#fff;text-align:center;
+  padding:9px 20px;font-size:11px;letter-spacing:2px;font-weight:500;
+  text-transform:uppercase;position:relative;z-index:10;
+}
+.topbar span{color:var(--yellow);}
+
+/* HEADER */
+header{
+  background:#fff;border-bottom:2px solid var(--black);
+  padding:0 5%;position:sticky;top:0;z-index:100;
+}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:68px;}
+.nav-logo{
+  font-family:'Bebas Neue',cursive;font-size:0;
+  display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;
+}
+.logo-top{font-size:11px;letter-spacing:3px;color:var(--gray);font-family:'Barlow Condensed',sans-serif;font-weight:600;text-transform:uppercase;}
+.logo-main{font-size:22px;letter-spacing:1px;color:var(--black);font-family:'Bebas Neue',cursive;line-height:1;}
+.logo-sub{font-size:11px;letter-spacing:2px;color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{
+  text-decoration:none;color:var(--black);font-size:12px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;transition:color .2s;padding:4px 0;
+  border-bottom:2px solid transparent;
+}
+.nav-links a:hover{color:var(--orange);border-bottom-color:var(--orange);}
+.nav-actions{display:flex;gap:16px;align-items:center;}
+.cart-btn{
+  background:var(--black);color:#fff;border:none;padding:10px 18px;
+  font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;display:flex;
+  align-items:center;gap:8px;transition:background .2s;
+}
+.cart-btn:hover{background:var(--orange);}
+.cart-count{
+  background:var(--orange);color:#fff;font-size:10px;font-weight:800;
+  width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+
+/* HERO BANNER */
+.hero{
+  background:var(--black);padding:60px 5%;
+  display:flex;align-items:center;justify-content:space-between;gap:32px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;right:-100px;top:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,0,0.15) 0%,transparent 70%);
+}
+.hero-text{position:relative;z-index:2;}
+.hero-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:3px;color:var(--orange);
+  text-transform:uppercase;margin-bottom:14px;
+  font-family:'Barlow Condensed',sans-serif;
+}
+.hero h1{
+  font-family:'Bebas Neue',cursive;font-size:clamp(40px,6vw,72px);
+  color:#fff;line-height:1;margin-bottom:16px;letter-spacing:1px;
+}
+.hero h1 span{color:var(--orange);}
+.hero p{color:#777;font-size:14px;line-height:1.7;max-width:400px;margin-bottom:28px;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-hero-primary{
+  background:var(--orange);color:#fff;border:none;
+  padding:13px 28px;font-size:12px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+  text-decoration:none;display:inline-block;transition:opacity .2s;
+}
+.btn-hero-primary:hover{opacity:.85;}
+
+/* COLLECTION HEADER */
+.collection-header{padding:44px 5% 20px;position:relative;z-index:1;}
+.collection-header h2{
+  font-family:'Bebas Neue',cursive;font-size:48px;letter-spacing:1px;
+  border-bottom:3px solid var(--black);display:inline-block;padding-bottom:6px;
+}
+.collection-header p{color:var(--gray);font-size:13px;margin-top:6px;}
+
+/* FILTERS */
+.filters-bar{
+  padding:16px 5%;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:12px;position:relative;z-index:1;
+}
+.filter-group{display:flex;gap:8px;flex-wrap:wrap;}
+.filter-btn{
+  background:#fff;border:1.5px solid var(--border);padding:7px 16px;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:all .15s;
+}
+.filter-btn:hover{border-color:var(--black);}
+.filter-btn.active{background:var(--black);color:#fff;border-color:var(--black);}
+
+/* PRODUCTS */
+.products-section{padding:24px 5% 48px;position:relative;z-index:1;}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0;}
+.product-card{cursor:pointer;position:relative;border:1px solid transparent;transition:border-color .2s;}
+.product-card:hover{border-color:var(--border);}
+
+/* ELIMINAR ARTÍCULO */
+.delete-btn{
+  position:absolute;top:8px;right:8px;z-index:5;background:rgba(0,0,0,.75);
+  color:#fff;border:none;width:28px;height:28px;border-radius:50%;
+  font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;
+  line-height:1;transition:background .2s;
+}
+body.admin-active .product-card:hover .delete-btn {
+  display: flex;
+}
+.delete-btn:hover{background:#cc0000;}
+
+.product-img-wrap{
+  background:var(--light);aspect-ratio:1;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.product-overlay{
+  position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;
+  background:linear-gradient(transparent 60%,rgba(0,0,0,0));
+  transition:background .3s;
+}
+.quick-add-btn{
+  width:100%;background:var(--black);color:#fff;border:none;
+  padding:11px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+  transform:translateY(6px);opacity:0;transition:all .25s;
+}
+.product-card:hover .quick-add-btn{transform:translateY(0);opacity:1;}
+.quick-add-btn:hover{background:var(--orange);}
+.badge-nuevo{
+  position:absolute;top:10px;left:10px;background:#fff;color:var(--black);
+  border:1.5px solid var(--black);font-size:9px;font-weight:800;
+  padding:3px 7px;letter-spacing:1.5px;text-transform:uppercase;
+  font-family:'Barlow Condensed',sans-serif;
+}
+.badge-agotado{
+  position:absolute;top:10px;left:10px;background:var(--black);color:#fff;
+  font-size:9px;font-weight:800;padding:3px 7px;letter-spacing:1.5px;
+  text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;
+}
+.product-info{padding:12px 0 18px;}
+.product-name{
+  font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--black);margin-bottom:5px;line-height:1.4;
+}
+.product-price{font-size:13px;color:#333;font-weight:400;}
+
+/* PRODUCT MODAL */
+.modal-img-wrap{position:relative;background:var(--light);height:300px;overflow:hidden;}
+.modal-slides{display:flex;height:100%;transition:transform .35s ease;}
+.modal-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--light);}
+.modal-slide img{width:100%;height:100%;object-fit:cover;}
+.modal-slide .slide-emoji{font-size:120px;}
+.carousel-prev,.carousel-next{
+  position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.55);
+  color:#fff;border:none;width:36px;height:36px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;z-index:3;transition:background .2s;
+}
+.carousel-prev{left:10px;} .carousel-next{right:10px;}
+.carousel-prev:hover,.carousel-next:hover{background:var(--orange);}
+.modal-thumbs{display:flex;gap:6px;padding:10px 28px 0;overflow-x:auto;}
+.modal-thumb{
+  width:56px;height:56px;object-fit:cover;cursor:pointer;border:2px solid transparent;
+  flex-shrink:0;transition:border-color .2s;font-size:28px;display:flex;
+  align-items:center;justify-content:center;background:var(--light);
+}
+.modal-thumb.active-thumb{border-color:var(--orange);}
+.modal-thumb img{width:100%;height:100%;object-fit:cover;}
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#fff;max-width:500px;width:100%;max-height:92vh;overflow-y:auto;
+  position:relative;animation:modalIn .25s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-close{
+  position:absolute;top:14px;right:14px;background:var(--black);color:#fff;
+  border:none;width:32px;height:32px;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:10;
+}
+.modal-body{padding:20px 28px 28px;}
+.modal-category{
+  font-size:10px;font-weight:700;letter-spacing:2px;color:var(--orange);
+  text-transform:uppercase;margin-bottom:8px;font-family:'Barlow Condensed',sans-serif;
+}
+.modal-name{
+  font-family:'Bebas Neue',cursive;font-size:32px;letter-spacing:.5px;
+  margin-bottom:8px;line-height:1;
+}
+.modal-price{
+  font-size:22px;font-weight:300;color:#333;margin-bottom:20px;
+}
+.wha-btn{
+  width:100%;background:#25D366;color:#fff;border:none;
+  padding:16px;font-size:14px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .2s;text-decoration:none;
+}
+.wha-btn:hover{background:#1ebe5d;}
+
+/* CART DRAWER */
+.cart-overlay-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;}
+.cart-overlay-bg.open{display:block;}
+.cart-drawer{
+  position:fixed;right:-420px;top:0;bottom:0;width:400px;
+  background:#fff;z-index:201;transition:right .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;border-left:2px solid var(--black);
+}
+.cart-drawer.open{right:0;}
+.cart-head{
+  padding:20px 24px;border-bottom:2px solid var(--black);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cart-head h3{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:1px;}
+.cart-close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray);}
+.cart-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);}
+.cart-foot{padding:20px 24px;border-top:2px solid var(--black);}
+.cart-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:600;margin-bottom:5px;}
+.checkout-btn{
+  width:100%;background:var(--black);color:#fff;border:none;padding:16px;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:background .2s;
+}
+.checkout-btn:hover{background:var(--orange);}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);
+  background:var(--black);color:#fff;padding:12px 24px;font-size:12px;font-weight:600;
+  letter-spacing:1px;opacity:0;transition:all .3s;z-index:500;
+  border-left:4px solid var(--orange);pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* BOTÓN DE ADMINISTRACIÓN */
+.floating-admin-trigger{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  background:rgba(10,10,10,0.4);color:#fff;border:none;
+  width:36px;height:36px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  transition:all .2s;
+}
+.floating-admin-trigger:hover{background:var(--black);transform:scale(1.05);}
+
+/* ADMIN PANEL */
+.admin-section{
+  display:none;margin-top:60px;border-top:3px solid var(--black);background:#0a0a0a;
+  padding:40px 5%;position:relative;z-index:1;
+}
+.admin-title{
+  font-family:'Bebas Neue',cursive;font-size:32px;color:#fff;
+  letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;gap:12px;
+}
+.admin-badge{
+  background:var(--orange);color:#fff;font-size:10px;font-weight:800;
+  padding:3px 10px;letter-spacing:2px;text-transform:uppercase;
+  font-family:'Barlow Condensed',sans-serif;border-radius:2px;
+}
+.admin-subtitle{color:#555;font-size:12px;margin-bottom:28px;letter-spacing:.5px;}
+.admin-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:16px;}
+.admin-field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;}
+.admin-field input, .admin-field select{
+  width:100%;background:#1a1a1a;border:1.5px solid #333;color:#fff;
+  padding:10px 12px;font-size:13px;font-family:'Inter',sans-serif;outline:none;
+  transition:border-color .15s;
+}
+.admin-field input:focus, .admin-field select:focus{border-color:var(--orange);}
+
+/* DROPZONE */
+.dropzone{
+  border:2px dashed #333;background:#111;padding:24px;text-align:center;color:var(--gray);
+  cursor:pointer;transition:all .2s;margin-bottom:16px;position:relative;
+}
+.dropzone:hover, .dropzone.dragover{border-color:var(--orange);background:#161616;color:#fff;}
+.dropzone input{display:none;}
+.dropzone p{font-size:12px;margin-top:4px;}
+.photo-preview-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.preview-item{position:relative;width:70px;height:70px;background:#222;border:1px solid #333;}
+.preview-item img{width:100%;height:100%;object-fit:cover;}
+.preview-loading{
+  position:absolute;inset:0;background:rgba(0,0,0,0.7);display:flex;
+  align-items:center;justify-content:center;font-size:10px;color:var(--orange);font-weight:bold;
+}
+
+.admin-actions{display:flex;gap:12px;margin-top:4px;flex-wrap:wrap;}
+.publish-btn{
+  background:var(--orange);color:#fff;border:none;padding:13px 28px;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:opacity .2s;
+  display:flex;align-items:center;gap:8px;
+}
+.publish-btn:hover{opacity:.88;}
+.copy-btn{
+  background:transparent;color:#fff;border:1.5px solid #333;padding:13px 24px;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:border-color .2s;
+  display:flex;align-items:center;gap:8px;
+}
+.copy-btn:hover{border-color:#fff;}
+
+/* FOOTER */
+footer{background:var(--black);color:#fff;padding:52px 5% 24px;position:relative;z-index:1;}
+.footer-bottom{
+  border-top:1px solid #1a1a1a;padding-top:20px;font-size:11px;
+  color:#333;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+@media(max-width:650px){
+  .nav-links{display:none;}
+  .hero{flex-direction:column;}
+  .products-grid{grid-template-columns:repeat(2,1fr);}
+  .cart-drawer{width:100%;right:-100%;}
+  .admin-form{grid-template-columns:1fr 1fr;}
+}
+
+/* LOGIN MODAL */
+.login-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;
+  display:none;align-items:center;justify-content:center;
+}
+.login-box{
+  background:#111;border:2px solid #FF6B00;padding:40px 36px;
+  max-width:360px;width:90%;text-align:center;position:relative;
+}
+.login-box h3{
+  font-family:'Bebas Neue',cursive;font-size:28px;color:#fff;
+  letter-spacing:1px;margin-bottom:6px;
+}
+.login-box p{font-size:12px;color:#666;margin-bottom:24px;}
+.login-box input{
+  width:100%;background:#1a1a1a;border:1.5px solid #333;color:#fff;
+  padding:13px 16px;font-size:14px;font-family:'Inter',sans-serif;
+  outline:none;margin-bottom:8px;letter-spacing:2px;text-align:center;
+  transition:border-color .2s;
+}
+.login-box input:focus{border-color:#FF6B00;}
+.login-error{
+  color:#ff4444;font-size:12px;margin-bottom:12px;
+  display:none;font-weight:600;
+}
+.login-submit{
+  width:100%;background:#FF6B00;color:#fff;border:none;
+  padding:14px;font-size:12px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+  transition:opacity .2s;margin-bottom:10px;
+}
+.login-submit:hover{opacity:.88;}
+.login-cancel{
+  background:none;border:none;color:#555;font-size:12px;
+  cursor:pointer;font-family:'Inter',sans-serif;text-decoration:underline;
+}
+.login-cancel:hover{color:#fff;}
+.login-lock{font-size:40px;margin-bottom:16px;}
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="logo-container">
-      <i class="fa-solid fa-box-open logo-icon"></i>
-      <div class="logo-text">CAPSULE<span>STORE</span></div>
-    </div>
-    <div class="cart-icon-container" onclick="toggleCart(true)">
-      <i class="fa-solid fa-shopping-bag"></i>
-      <div class="cart-count" id="cartCount">0</div>
-    </div>
-  </header>
+<button class="floating-admin-trigger" onclick="checkAdminPassword()" title="Modo Administrador">⚙️</button>
 
-  <section class="hero">
-    <div class="hero-container">
-      <div class="hero-text">
-        <p class="hero-eyebrow">⚡ Temporada 2026 — Edición Limitada</p>
-        <h1>CAPSULE STORE<br><span>BY DRAGON BALL RD</span></h1>
-        <p>Ropa y accesorios exclusivos para verdaderos Saiyajines. Calidad premium con carrusel de vistas múltiples y envíos rápidos a toda la República Dominicana.</p>
-        <div class="hero-btns">
-          <a href="#catalogo" class="btn-hero-primary">Ver Catálogo</a>
+<div class="topbar">🔥 Envío a todo RD · <span>Usa WhatsApp para comprar directo</span> · Stock limitado</div>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="nav-logo">
+      <span class="logo-top">Capsule Store</span>
+      <span class="logo-main">BY DRAGON BALL RD</span>
+      <span class="logo-sub">Colección Oficial</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#catalogo">Catálogo</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" onclick="toggleCart()">
+        🛍️ Carrito <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">⚡ Temporada 2026 — Edición Limitada</p>
+    <h1>CAPSULE STORE<br><span>BY DRAGON BALL RD</span></h1>
+    <p>Ropa y accesorios exclusivos para verdaderos Saiyajines. Calidad premium, envíos a toda la República Dominicana.</p>
+    <div class="hero-btns">
+      <a href="#catalogo" class="btn-hero-primary">Ver Catálogo</a>
+    </div>
+  </div>
+</section>
+
+<div class="collection-header" id="catalogo">
+  <h2>Todos los Productos</h2>
+  <p>Todos los productos de la tienda · <span id="total-count">0</span> artículos</p>
+</div>
+
+<div class="filters-bar">
+  <div class="filter-group">
+    <button class="filter-btn active" onclick="filterCat('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="filterCat('camisetas',this)">Camisetas</button>
+    <button class="filter-btn" onclick="filterCat('abrigos',this)">Abrigos</button>
+    <button class="filter-btn" onclick="filterCat('accesorios',this)">Accesorios</button>
+  </div>
+</div>
+
+<div class="products-section">
+  <div class="products-grid" id="products-grid"></div>
+</div>
+
+<div class="admin-section" id="admin">
+  <div class="admin-title">Panel de Administración <span class="admin-badge">Uso Interno</span></div>
+  <p class="admin-subtitle">Agrega nuevos productos seleccionando fotos reales de tu computadora.</p>
+  
+  <div class="admin-form">
+    <div class="admin-field">
+      <label>Nombre del Producto</label>
+      <input type="text" id="a-name" placeholder="T-Shirt Goku...">
+    </div>
+    <div class="admin-field">
+      <label>Precio (RD$)</label>
+      <input type="number" id="a-price" placeholder="1000">
+    </div>
+    <div class="admin-field">
+      <label>Emoji (si no hay foto)</label>
+      <input type="text" id="a-emoji" placeholder="👕" maxlength="4">
+    </div>
+    <div class="admin-field">
+      <label>Categoría</label>
+      <select id="a-cat">
+        <option value="camisetas">Camisetas</option>
+        <option value="abrigos">Abrigos</option>
+        <option value="accesorios">Accesorios</option>
+      </select>
+    </div>
+    <div class="admin-field">
+      <label>Etiqueta</label>
+      <select id="a-badge">
+        <option value="">Ninguna</option>
+        <option value="nuevo">Nuevo</option>
+        <option value="agotado">Agotado</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="display:block;font-size:10px;font-weight:700;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">
+      📸 Fotos del Producto (Sube directamente archivos)
+    </label>
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+      <span>📁 Haz clic para buscar fotos o arrástralas aquí</span>
+      <p>Se subirán automáticamente a internet para generar sus enlaces finales</p>
+      <input type="file" id="file-input" multiple accept="image/*" onchange="handleFileSelect(event)">
+    </div>
+    <div class="photo-preview-grid" id="photo-preview"></div>
+  </div>
+
+  <div class="admin-actions">
+    <button class="publish-btn" onclick="publishProduct()">✅ Publicar Producto</button>
+    <button class="copy-btn" onclick="copyCode()">📋 Copiar Código del Catálogo</button>
+  </div>
+
+  <!-- INSTRUCCIONES CLOUDINARY (aparece si el preset no está creado) -->
+  <div id="cloudinary-help" style="display:none;margin-top:20px;background:#1a0a00;border:1.5px solid #FF6B00;padding:20px 24px;border-radius:2px;">
+    <p style="color:#FF6B00;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">⚠️ Paso necesario en Cloudinary (solo una vez)</p>
+    <p style="color:#aaa;font-size:12px;line-height:1.8;">
+      Para que las fotos se suban correctamente necesitas crear un <strong style="color:#fff;">Upload Preset</strong> en tu cuenta de Cloudinary:<br><br>
+      1. Ve a <a href="https://cloudinary.com/console/settings/upload" target="_blank" style="color:#FF6B00;">cloudinary.com → Settings → Upload</a><br>
+      2. Haz clic en <strong style="color:#fff;">"Add upload preset"</strong><br>
+      3. En <strong style="color:#fff;">Preset name</strong> escribe exactamente: <code style="background:#333;color:#FFD700;padding:2px 6px;">capsule_store</code><br>
+      4. En <strong style="color:#fff;">Signing mode</strong> selecciona: <code style="background:#333;color:#FFD700;padding:2px 6px;">Unsigned</code><br>
+      5. Haz clic en <strong style="color:#fff;">Save</strong><br><br>
+      ¡Listo! Después vuelve a intentar subir la foto.
+    </p>
+    <button onclick="document.getElementById('cloudinary-help').style.display='none'" style="margin-top:12px;background:none;border:1px solid #444;color:#666;padding:6px 14px;cursor:pointer;font-size:11px;">Cerrar aviso</button>
+  </div>
+</div>
+
+<footer id="contacto">
+  <div class="footer-bottom">
+    <p>&copy; 2026 Capsule Store by Dragon Ball RD. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal-box" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img-wrap">
+      <div class="modal-slides" id="modal-slides"></div>
+      <button class="carousel-prev" id="cprev" onclick="slideModal(-1)" style="display:none">‹</button>
+      <button class="carousel-next" id="cnext" onclick="slideModal(1)" style="display:none">›</button>
+    </div>
+    <div class="modal-thumbs" id="modal-thumbs"></div>
+    <div class="modal-body">
+      <p class="modal-category" id="modal-cat"></p>
+      <h3 class="modal-name" id="modal-name"></h3>
+      <p class="modal-price" id="modal-price"></p>
+      <a class="wha-btn" id="wha-btn" href="#" target="_blank">💬 Comprar por WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<div class="cart-overlay-bg" id="cart-overlay-bg" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-head">
+    <h3>Tu Carrito</h3>
+    <button class="cart-close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cart-body"></div>
+  <div class="cart-foot">
+    <div class="cart-total-row"><span>Subtotal</span><span id="cart-total">RD$0</span></div>
+    <button class="checkout-btn" onclick="cartWhatsApp()">💬 Pedir por WhatsApp</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CAPSULE STORE BY DRAGON BALL RD — LÓGICA PRINCIPAL
+// ═══════════════════════════════════════════════════════════
+
+// ── CONTRASEÑA (hash SHA-256 de tu clave real) ──
+// La contraseña actual es: DragonBallRD2025
+// Para cambiarla, genera el hash en: https://emn178.github.io/online-tools/sha256.html
+// y reemplaza el valor de ADMIN_HASH abajo.
+const ADMIN_HASH = "8e5cc40b9a1e66894cc06acbe06394daee717df21df71e116a85fb96771de48b";
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PRODUCTOS — se guardan en localStorage para que persistan
+// ═══════════════════════════════════════════════════════════
+const DEFAULT_PRODUCTS = [
+  {id:1,name:"Memoria USB Dragon Ball Z",price:3500,emoji:"💾",cat:"accesorios",badge:"agotado",photos:[]},
+  {id:2,name:"T-Shirt Goku y Vegeta",price:1000,emoji:"👕",cat:"camisetas",badge:"nuevo",photos:[]},
+  {id:3,name:"T-Shirt Blanca Saga Dragon Ball",price:1000,emoji:"👕",cat:"camisetas",badge:"",photos:[]},
+  {id:4,name:"Abrigo Dragón Ball Súper",price:2500,emoji:"🧥",cat:"abrigos",badge:"nuevo",photos:[]},
+  {id:5,name:"Abrigo Goku Dragon Ball Z",price:2500,emoji:"🧥",cat:"abrigos",badge:"",photos:[]},
+  {id:6,name:"T-Shirt Amarilla Logo Z",price:1000,emoji:"👕",cat:"camisetas",badge:"",photos:[]},
+  {id:7,name:"Hoodie Rojo Vegeta",price:2200,emoji:"🧥",cat:"abrigos",badge:"nuevo",photos:[]},
+  {id:8,name:"Gorra Bordada Logo",price:900,emoji:"🧢",cat:"accesorios",badge:"",photos:[]},
+];
+
+function loadProducts() {
+  try {
+    const saved = localStorage.getItem('capsule_products');
+    return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
+  } catch(e) { return DEFAULT_PRODUCTS; }
+}
+function saveProducts() {
+  try { localStorage.setItem('capsule_products', JSON.stringify(products)); } catch(e) {}
+}
+
+let products = loadProducts();
+let cart = [];
+let nextId = Math.max(...products.map(p=>p.id), 99) + 1;
+let currentCat = 'todos';
+let modalSlideIndex = 0;
+let modalSlides = [];
+let uploadedPhotos = [];
+
+const WHA_NUMBER = '18098787656';
+
+// ═══════════════════════════════════════════════════════════
+//  LOGIN DE ADMINISTRADOR — con contraseña segura (hash)
+// ═══════════════════════════════════════════════════════════
+async function checkAdminPassword() {
+  const adminSection = document.getElementById('admin');
+  // Si ya está abierto, cerrarlo
+  if (adminSection.style.display === 'block') {
+    adminSection.style.display = 'none';
+    document.body.classList.remove('admin-active');
+    showToast('🔒 Panel cerrado');
+    return;
+  }
+
+  // Mostrar modal de login
+  document.getElementById('login-modal').style.display = 'flex';
+  document.getElementById('login-input').value = '';
+  setTimeout(()=>document.getElementById('login-input').focus(), 100);
+}
+
+async function submitAdminLogin() {
+  const pass = document.getElementById('login-input').value;
+  if (!pass) return;
+  const hashed = await sha256(pass);
+  if (hashed === ADMIN_HASH) {
+    document.getElementById('login-modal').style.display = 'none';
+    const adminSection = document.getElementById('admin');
+    adminSection.style.display = 'block';
+    document.body.classList.add('admin-active');
+    adminSection.scrollIntoView({ behavior: 'smooth' });
+    showToast('✅ Bienvenido, administrador');
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-input').value = '';
+    document.getElementById('login-input').focus();
+  }
+}
+
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+}
+
+// Enter en el campo de contraseña
+document.addEventListener('keydown', function(e) {
+  if (document.getElementById('login-modal').style.display === 'flex' && e.key === 'Enter') {
+    submitAdminLogin();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  SUBIDA DE FOTOS A CLOUDINARY — visibles desde cualquier
+//  dispositivo en todo el mundo
+// ═══════════════════════════════════════════════════════════
+const CLOUDINARY_CLOUD = 'dloiqtaxw';
+const CLOUDINARY_PRESET = 'capsule_store'; // Upload preset sin firma (unsigned)
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`;
+
+function handleFileSelect(event) {
+  processFiles(event.target.files);
+}
+
+function processFiles(files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    uploadToCloudinary(file);
+  });
+}
+
+function uploadToCloudinary(file) {
+  const tempId = 'ph-' + Math.random().toString(36).substr(2,8);
+  const container = document.getElementById('photo-preview');
+
+  // Mostrar placeholder con barra de progreso
+  const div = document.createElement('div');
+  div.className = 'preview-item';
+  div.id = tempId;
+  div.innerHTML = `
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1a1a1a;gap:6px;">
+      <div style="font-size:22px;">⏳</div>
+      <div style="font-size:9px;color:#FF6B00;font-weight:700;letter-spacing:1px;">SUBIENDO...</div>
+      <div style="width:80%;height:3px;background:#333;border-radius:2px;overflow:hidden;">
+        <div id="bar-${tempId}" style="height:100%;background:#FF6B00;width:0%;transition:width .3s;"></div>
+      </div>
+    </div>`;
+  container.appendChild(div);
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  formData.append('folder', 'capsule_store');
+
+  const xhr = new XMLHttpRequest();
+
+  // Progreso real de subida
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 100);
+      const bar = document.getElementById('bar-' + tempId);
+      if (bar) bar.style.width = pct + '%';
+    }
+  };
+
+  xhr.onload = () => {
+    const el = document.getElementById(tempId);
+    if (xhr.status === 200) {
+      const data = JSON.parse(xhr.responseText);
+      const url = data.secure_url;
+      uploadedPhotos.push({ id: tempId, url });
+      if (el) el.innerHTML = `
+        <img src="${url}" alt="foto subida" style="width:100%;height:100%;object-fit:cover;">
+        <button onclick="removeUploadedPhoto('${tempId}','${url}')" style="position:absolute;top:0;right:0;background:#cc0000;color:#fff;border:none;cursor:pointer;width:20px;height:20px;font-size:12px;z-index:10;display:flex;align-items:center;justify-content:center;">✕</button>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,200,100,.8);color:#fff;font-size:9px;font-weight:700;text-align:center;padding:2px;letter-spacing:1px;">✓ SUBIDA</div>`;
+      showToast('✅ Foto subida a Cloudinary — visible para todos');
+    } else {
+      if (el) el.remove();
+      // Si falla el preset, mostrar instrucción clara
+      if (xhr.status === 400) {
+        showToast('⚠️ Necesitas configurar el Upload Preset en Cloudinary (ver instrucciones abajo)');
+        document.getElementById('cloudinary-help').style.display = 'block';
+      } else {
+        showToast('❌ Error al subir foto. Revisa tu conexión.');
+      }
+    }
+  };
+
+  xhr.onerror = () => {
+    const el = document.getElementById(tempId);
+    if (el) el.remove();
+    showToast('❌ Error de red. Revisa tu conexión a internet.');
+  };
+
+  xhr.open('POST', CLOUDINARY_URL);
+  xhr.send(formData);
+}
+
+function removeUploadedPhoto(id, url) {
+  uploadedPhotos = uploadedPhotos.filter(p => p.id !== id);
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+// Drag & drop
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('dropzone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('dragover');
+    processFiles(e.dataTransfer.files);
+  });
+  renderProducts();
+  updateCartUI();
+});
+
+// ═══════════════════════════════════════════════════════════
+//  PUBLICAR PRODUCTO
+// ═══════════════════════════════════════════════════════════
+function publishProduct() {
+  const name  = document.getElementById('a-name').value.trim();
+  const price = parseInt(document.getElementById('a-price').value);
+  const emoji = document.getElementById('a-emoji').value.trim() || '📦';
+  const cat   = document.getElementById('a-cat').value;
+  const badge = document.getElementById('a-badge').value;
+  if (!name || !price) { showToast('⚠️ Completa nombre y precio'); return; }
+
+  const newP = { id: nextId++, name, price, emoji, cat, badge, photos: uploadedPhotos.map(p=>p.url) };
+  products.unshift(newP);
+  saveProducts();
+  renderProducts();
+
+  document.getElementById('a-name').value = '';
+  document.getElementById('a-price').value = '';
+  document.getElementById('a-emoji').value = '';
+  document.getElementById('a-badge').value = '';
+  document.getElementById('file-input').value = '';
+  uploadedPhotos = [];
+  renderPhotoPreview();
+  showToast('✅ ¡Producto publicado con éxito!');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER PRODUCTOS
+// ═══════════════════════════════════════════════════════════
+function renderProducts() {
+  let list = currentCat === 'todos' ? [...products] : products.filter(p=>p.cat===currentCat);
+  document.getElementById('total-count').textContent = products.length;
+  document.getElementById('products-grid').innerHTML = list.map(p => {
+    const hasPhoto = p.photos && p.photos.length > 0;
+    const imgHTML = hasPhoto
+      ? `<img src="${p.photos[0]}" style="width:100%;height:100%;object-fit:cover;" alt="${p.name}">`
+      : `<span style="font-size:90px;">${p.emoji}</span>`;
+    return `
+    <div class="product-card" onclick="openModal(${p.id})">
+      <button class="delete-btn" onclick="deleteProduct(${p.id},event)" title="Eliminar">✕</button>
+      <div class="product-img-wrap">
+        ${imgHTML}
+        ${p.badge==='agotado' ? '<div class="badge-agotado">Agotado</div>' : ''}
+        ${p.badge==='nuevo'   ? '<div class="badge-nuevo">Nuevo</div>'    : ''}
+        ${hasPhoto && p.photos.length > 1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;">+${p.photos.length} fotos</div>` : ''}
+        <div class="product-overlay">
+          ${p.badge !== 'agotado' ? `<button class="quick-add-btn" onclick="addCart(${p.id},event)">+ Agregar al carrito</button>` : ''}
         </div>
       </div>
-      <div class="hero-image-container">
-        <div class="hero-glow"></div>
-        <img src="https://i.postimg.cc/mrnZdD5Z/3c879589-5f46-447a-a433-a4da7bf59262.jpg" alt="Capsule Banner" class="hero-img">
+      <div class="product-info">
+        <p class="product-name">${p.name}</p>
+        <p class="product-price">RD$ ${p.price.toLocaleString('es-DO')}.00</p>
       </div>
-    </div>
-  </section>
+    </div>`;
+  }).join('');
+}
 
-  <div class="main-layout" id="catalogo">
-    <aside class="filter-sidebar">
-      <div class="filter-title">Categorías</div>
-      <div class="cat-list">
-        <button class="cat-btn active" onclick="filterCategory('Todos', this)">Todos los artículos</button>
-        <button class="cat-btn" onclick="filterCategory('Ropa', this)">Ropa</button>
-        <button class="cat-btn" onclick="filterCategory('Calzado', this)">Calzado</button>
-        <button class="cat-btn" onclick="filterCategory('Accesorios', this)">Accesorios</button>
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MODAL CON CARRUSEL
+// ═══════════════════════════════════════════════════════════
+function openModal(id) {
+  const p = products.find(x=>x.id===id); if (!p) return;
+  modalSlideIndex = 0;
+  modalSlides = (p.photos && p.photos.length > 0) ? p.photos : ['emoji:'+p.emoji];
+
+  const slidesEl = document.getElementById('modal-slides');
+  slidesEl.style.transform = 'translateX(0)';
+  slidesEl.innerHTML = modalSlides.map(s =>
+    s.startsWith('emoji:')
+      ? `<div class="modal-slide"><span class="slide-emoji">${s.slice(6)}</span></div>`
+      : `<div class="modal-slide"><img src="${s}" alt="${p.name}"></div>`
+  ).join('');
+
+  const thumbsEl = document.getElementById('modal-thumbs');
+  if (modalSlides.length > 1) {
+    thumbsEl.style.display = 'flex';
+    thumbsEl.innerHTML = modalSlides.map((s,i) =>
+      s.startsWith('emoji:')
+        ? `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})">${s.slice(6)}</div>`
+        : `<div class="modal-thumb ${i===0?'active-thumb':''}" onclick="goToSlide(${i})"><img src="${s}"></div>`
+    ).join('');
+  } else { thumbsEl.style.display = 'none'; }
+
+  document.getElementById('cprev').style.display = modalSlides.length > 1 ? 'flex' : 'none';
+  document.getElementById('cnext').style.display = modalSlides.length > 1 ? 'flex' : 'none';
+  document.getElementById('modal-cat').textContent   = p.cat.toUpperCase();
+  document.getElementById('modal-name').textContent  = p.name;
+  document.getElementById('modal-price').textContent = 'RD$ '+p.price.toLocaleString('es-DO')+'.00';
+  const msg = encodeURIComponent(`¡Hola! Me interesa comprar: ${p.name} — RD$ ${p.price.toLocaleString('es-DO')}.00`);
+  document.getElementById('wha-btn').href = `https://wa.me/${WHA_NUMBER}?text=${msg}`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function slideModal(dir) {
+  modalSlideIndex = (modalSlideIndex + dir + modalSlides.length) % modalSlides.length;
+  document.getElementById('modal-slides').style.transform = `translateX(-${modalSlideIndex*100}%)`;
+  updateActiveThumb();
+}
+function goToSlide(i) {
+  modalSlideIndex = i;
+  document.getElementById('modal-slides').style.transform = `translateX(-${i*100}%)`;
+  updateActiveThumb();
+}
+function updateActiveThumb() {
+  document.querySelectorAll('.modal-thumb').forEach((t,idx)=>{
+    t.classList.toggle('active-thumb', idx===modalSlideIndex);
+  });
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+// ═══════════════════════════════════════════════════════════
+//  CARRITO
+// ═══════════════════════════════════════════════════════════
+function addCart(id, e) {
+  e && e.stopPropagation();
+  const p = products.find(x=>x.id===id); if (!p) return;
+  const ex = cart.find(x=>x.id===id);
+  if (ex) ex.qty++; else cart.push({...p, qty:1});
+  updateCartUI();
+  showToast('✅ Artículo agregado al carrito');
+}
+function updateCartUI() {
+  const total = cart.reduce((s,i)=>s+i.price*i.qty, 0);
+  document.getElementById('cart-total').textContent  = 'RD$ '+total.toLocaleString('es-DO');
+  document.getElementById('cart-count').textContent  = cart.reduce((s,i)=>s+i.qty, 0);
+  const body = document.getElementById('cart-body');
+  if (!cart.length) { body.innerHTML='<p style="text-align:center;color:#888;margin-top:40px;">El carrito está vacío</p>'; return; }
+  body.innerHTML = cart.map(item=>`
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:center;">
+      <div style="width:48px;height:48px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+        ${item.photos&&item.photos.length ? `<img src="${item.photos[0]}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:22px;">${item.emoji}</span>`}
       </div>
-    </aside>
-
-    <main class="catalog-section">
-      <h2 id="categoryTitle">Todos los artículos</h2>
-      <div class="products-grid" id="productsGrid"></div>
-    </main>
-  </div>
-
-  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
-  
-  <div class="cart-sidebar" id="cartSidebar">
-    <div class="cart-header">
-      <h3>Tu Carrito</h3>
-      <button class="cart-close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="cart-items-list" id="cartItemsList"></div>
-    <div class="cart-footer">
-      <div class="cart-total-row">
-        <span>Total:</span>
-        <span id="cartTotalText">$0.00</span>
+      <div style="flex:1;">
+        <p style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">${item.name}</p>
+        <p style="color:#666;font-size:11px;margin-top:3px;">${item.qty} × RD$ ${item.price.toLocaleString('es-DO')}</p>
       </div>
-      <a href="#" class="order-whatsapp-btn" onclick="sendWhatsAppOrder(event)">
-        <i class="fa-brands fa-whatsapp"></i> Enviar Pedido por WhatsApp
-      </a>
-    </div>
-  </div>
+      <button onclick="removeCart(${item.id})" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:18px;line-height:1;">✕</button>
+    </div>`).join('');
+}
+function removeCart(id) { cart=cart.filter(x=>x.id!==id); updateCartUI(); }
+function cartWhatsApp() {
+  if (!cart.length) { showToast('⚠️ Tu carrito está vacío'); return; }
+  let msg = '¡Hola Dragon Ball RD! Me gustaría pedir:\n\n';
+  cart.forEach(i => { msg += `• ${i.name} (x${i.qty}) — RD$ ${(i.price*i.qty).toLocaleString('es-DO')}\n`; });
+  const total = cart.reduce((s,i)=>s+i.price*i.qty, 0);
+  msg += `\n*Total: RD$ ${total.toLocaleString('es-DO')}*`;
+  window.open(`https://wa.me/${WHA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function toggleCart() {
+  document.getElementById('cart-drawer').classList.toggle('open');
+  document.getElementById('cart-overlay-bg').classList.toggle('open');
+}
 
-  <footer>
-    <p>&copy; 2026 Capsule Store — By Dragon Ball RD. Todos los derechos reservados.</p>
-  </footer>
-
-  <script>
-    // BASE DE DATOS FIJA CON TUS IMÁGENES AGRUPADAS EXACTAMENTE SEGÚN TU LISTA
-    let products = [
-      { id: 1, name: "Abrigo Premium Negro Saiyan", price: 45.00, emoji: "🧥", cat: "Ropa", badge: "Popular", photos: ["https://i.postimg.cc/50F4DVhM/1.jpg", "https://i.postimg.cc/BvzZh6Vs/1-1.jpg"] },
-      { id: 2, name: "Abrigo Capsule Corp Blue", price: 45.00, emoji: "🧥", cat: "Ropa", badge: "Nuevo", photos: ["https://i.postimg.cc/DzNfCZM7/2.jpg", "https://i.postimg.cc/26BkgDsN/2-1.jpg", "https://i.postimg.cc/G2sL6CWD/2-1.jpg"] },
-      { id: 3, name: "Hoodie Saiyan Training Orange", price: 40.00, emoji: "👕", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/MGLZsTFS/3.jpg"] },
-      { id: 4, name: "T-Shirt Minimalist Goku Blue", price: 25.00, emoji: "👕", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/mDFLKsvT/4.jpg"] },
-      { id: 5, name: "Zapatillas Capsule Track 01", price: 65.00, emoji: "👟", cat: "Calzado", badge: "Popular", photos: ["https://i.postimg.cc/25tjH6Kz/5.jpg"] },
-      { id: 6, name: "Sneakers Saiyan Pride Black", price: 70.00, emoji: "👟", cat: "Calzado", badge: "", photos: ["https://i.postimg.cc/NMrsZc3G/6.jpg"] },
-      { id: 7, name: "Gorra Ajustable Majin Buu", price: 18.00, emoji: "🧢", cat: "Accesorios", badge: "", photos: ["https://i.postimg.cc/MTj6gSCx/7.jpg", "https://i.postimg.cc/rsXVkHT0/7-1.jpg"] },
-      { id: 8, name: "Mochila Z-Warriors Urbana", price: 35.00, emoji: "🎒", cat: "Accesorios", badge: "Nuevo", photos: ["https://i.postimg.cc/mrnZdD5Z/8.jpg"] },
-      { id: 9, name: "T-Shirt Vegeta Super Saiyan", price: 25.00, emoji: "👕", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/rmtV7kBD/9.jpg", "https://i.postimg.cc/j5JxBbpw/9-1.jpg", "https://i.postimg.cc/VvQf8hwD/9-2.jpg"] },
-      { id: 10, name: "Hoodie Shenlong Dragon Spirit", price: 45.00, emoji: "🧥", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/NMrsZc3F/10.jpg", "https://i.postimg.cc/76THjkF8/10-1.jpg"] },
-      { id: 11, name: "Jogger Saiyan Elite Grey", price: 38.00, emoji: "👖", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/KzgGC26Y/11.jpg"] },
-      { id: 12, name: "Shorts de Boxeo Master Roshi", price: 22.00, emoji: "🩳", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/XvPN2JzY/12.jpg", "https://i.postimg.cc/TwWdB6zR/12-1.jpg"] },
-      { id: 13, name: "Bermuda Deportiva Red Ribbon", price: 24.00, emoji: "🩳", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/W3JNxvBT/13.jpg", "https://i.postimg.cc/hvWDBYn2/13-1.jpg"] },
-      { id: 14, name: "Camiseta Tirantes Kame House", price: 20.00, emoji: "🎽", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/FRJrw4M1/14.jpg", "https://i.postimg.cc/KjSG2WbQ/14-1.jpg"] },
-      { id: 15, name: "T-Shirt Goku Kanji Legend", price: 25.00, emoji: "👕", cat: "Ropa", badge: "Popular", photos: ["https://i.postimg.cc/3RD8zTsg/15.jpg", "https://i.postimg.cc/50F4DV88/15-1.jpg"] },
-      { id: 16, name: "Medias Altas Capsule Corp Pack x2", price: 12.00, emoji: "🧦", cat: "Accesorios", badge: "", photos: ["https://i.postimg.cc/G2sL6CWP/16.jpg", "https://i.postimg.cc/8cQpSYGB/16-1.jpg"] },
-      { id: 17, name: "Sandalias Playa Gohan Spirit", price: 18.00, emoji: "🩴", cat: "Calzado", badge: "", photos: ["https://i.postimg.cc/XqSjbPWF/17.jpg", "https://i.postimg.cc/NFqscnty/17-1.jpg", "https://i.postimg.cc/j20xb1Tz/17-2.jpg"] },
-      { id: 18, name: "T-Shirt Trunks Future Hope", price: 26.00, emoji: "👕", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/qqVJTFrG/18.jpg", "https://i.postimg.cc/1XhmQdSB/18-1.jpg"] },
-      { id: 19, name: "Chaqueta Cortavientos Android 17", price: 48.00, emoji: "🧥", cat: "Ropa", badge: "Nuevo", photos: ["https://i.postimg.cc/PJsXj7HW/19.jpg", "https://i.postimg.cc/nzQFNJyz/19-1.jpg"] },
-      { id: 20, name: "T-Shirt Shenlong Minimalist White", price: 25.00, emoji: "👕", cat: "Ropa", badge: "", photos: ["https://i.postimg.cc/j20xb1TJ/20.jpg", "https://i.postimg.cc/4ykfg0Gv/20-1.jpg"] },
-      { id: 21, name: "Gorra Trucker DBZ Vintage", price: 19.00, emoji: "🧢", cat: "Accesorios", badge: "", photos: ["https://i.postimg.cc/63GWFXkf/21.jpg", "https://i.postimg.cc/1tNmbQkc/21-1.jpg"] }
-    ];
-
-    let cart = [];
-    let currentCategory = "Todos";
-    let activeIndexes = {}; // Guarda la foto activa por cada ID de artículo
-
-    function renderProducts() {
-      const grid = document.getElementById("productsGrid");
-      grid.innerHTML = "";
-
-      const filtered = currentCategory === "Todos" 
-        ? products 
-        : products.filter(p => p.cat === currentCategory);
-
-      filtered.forEach(p => {
-        if (activeIndexes[p.id] === undefined) {
-          activeIndexes[p.id] = 0;
-        }
-
-        const currentIndex = activeIndexes[p.id];
-        const hasMultiple = p.photos.length > 1;
-
-        // Generar puntos de paginación si hay varias fotos
-        let dotsHtml = "";
-        if (hasMultiple) {
-          dotsHtml = `<div class="carousel-dots">`;
-          p.photos.forEach((_, idx) => {
-            dotsHtml += `<div class="carousel-dot ${idx === currentIndex ? 'active' : ''}"></div>`;
-          });
-          dotsHtml += `</div>`;
-        }
-
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          ${p.badge ? `<div class="badge">${p.badge}</div>` : ''}
-          <div class="carousel-container">
-            <div class="carousel-track" style="transform: translateX(-${currentIndex * 100}%);">
-              ${p.photos.map(src => `
-                <div class="carousel-slide">
-                  <img src="${src}" class="carousel-img" alt="${p.name}">
-                </div>
-              `).join('')}
-            </div>
-            ${hasMultiple ? `
-              <button class="carousel-btn carousel-btn-prev" onclick="moveCarousel(${p.id}, -1, event)">
-                <i class="fa-solid fa-chevron-left"></i>
-              </button>
-              <button class="carousel-btn carousel-btn-next" onclick="moveCarousel(${p.id}, 1, event)">
-                <i class="fa-solid fa-chevron-right"></i>
-              </button>
-            ` : ''}
-            ${dotsHtml}
-          </div>
-          <div class="product-info">
-            <div class="product-name">${p.emoji} ${p.name}</div>
-            <div class="product-meta">
-              <div class="product-price">$${p.price.toFixed(2)}</div>
-              <button class="add-to-cart-btn" onclick="addToCart(${p.id}, event)">
-                <i class="fa-solid fa-cart-plus"></i>
-              </button>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    // CONTROL DEL INTERRUPTOR DEL CARRUSEL
-    window.moveCarousel = function(productId, direction, event) {
-      event.stopPropagation();
-      event.preventDefault();
-      
-      const product = products.find(p => p.id === productId);
-      if (!product) return;
-
-      let nextIndex = activeIndexes[productId] + direction;
-      
-      if (nextIndex < 0) {
-        nextIndex = product.photos.length - 1;
-      } else if (nextIndex >= product.photos.length) {
-        nextIndex = 0;
-      }
-
-      activeIndexes[productId] = nextIndex;
-      renderProducts();
-    };
-
-    window.filterCategory = function(cat, btn) {
-      currentCategory = cat;
-      document.getElementById("categoryTitle").innerText = cat === "Todos" ? "Todos los artículos" : cat;
-      
-      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      
-      renderProducts();
-    };
-
-    window.addToCart = function(id, event) {
-      if(event) event.stopPropagation();
-      const product = products.find(p => p.id === id);
-      cart.push(product);
-      updateCartUI();
-    };
-
-    function updateCartUI() {
-      document.getElementById("cartCount").innerText = cart.length;
-      
-      const list = document.getElementById("cartItemsList");
-      list.innerHTML = "";
-      
-      let total = 0;
-      
-      cart.forEach((item, index) => {
-        total += item.price;
-        const div = document.createElement("div");
-        div.className = "cart-item";
-        div.innerHTML = `
-          <img src="${item.photos[0]}" class="cart-item-img">
-          <div class="cart-item-detail">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
-          </div>
-          <button class="cart-item-remove" onclick="removeFromCart(${index})">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        `;
-        list.appendChild(div);
-      });
-      
-      document.getElementById("cartTotalText").innerText = `$${total.toFixed(2)}`;
-    }
-
-    window.removeFromCart = function(index) {
-      cart.splice(index, 1);
-      updateCartUI();
-    };
-
-    window.toggleCart = function(open) {
-      const sidebar = document.getElementById("cartSidebar");
-      const overlay = document.getElementById("cartOverlay");
-      if (open) {
-        sidebar.classList.add("open");
-        overlay.classList.add("open");
-      } else {
-        sidebar.classList.remove("open");
-        overlay.classList.remove("open");
-      }
-    };
-
-    window.sendWhatsAppOrder = function(event) {
-      event.preventDefault();
-      if(cart.length === 0) {
-        alert("Tu carrito está vacío.");
-        return;
-      }
-      
-      let message = "Olá Capsule Store, me gustaría ordenar los siguientes productos:\n\n";
-      let total = 0;
-      
-      cart.forEach((item, i) => {
-        message += `${i+1}. ${item.name} — $${item.price.toFixed(2)}\n`;
-        total += item.price;
-      });
-      
-      message += `\n*Total a pagar: $${total.toFixed(2)}*`;
-      
-      // Número de WhatsApp configurado para la tienda
-      const phone = "18296985474"; 
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-      window.open(url, '_blank');
-    };
-
-    // Lanzamiento Inicial del Catálogo
+// ═══════════════════════════════════════════════════════════
+//  ELIMINAR PRODUCTO
+// ═══════════════════════════════════════════════════════════
+function deleteProduct(id, e) {
+  e && e.stopPropagation();
+  if (confirm('¿Seguro que deseas eliminar este producto?')) {
+    products = products.filter(p=>p.id!==id);
+    saveProducts();
     renderProducts();
-  </script>
+    showToast('🗑️ Producto eliminado');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COPIAR CÓDIGO
+// ═══════════════════════════════════════════════════════════
+function copyCode() {
+  const code = `const DEFAULT_PRODUCTS = [\n${products.map(p=>{
+    const photosStr = p.photos && p.photos.length ? p.photos.map(u=>`"${u.substring(0,60)}..."`).join(',') : '';
+    return `  {id:${p.id},name:"${p.name}",price:${p.price},emoji:"${p.emoji}",cat:"${p.cat}",badge:"${p.badge||''}",photos:[/* ${p.photos?p.photos.length:0} foto(s) guardada(s) en localStorage */]}`;
+  }).join(',\n')}\n];`;
+  navigator.clipboard.writeText(code).then(()=>{
+    showToast('📋 Código copiado. Nota: las fotos quedan guardadas en tu navegador.');
+  }).catch(()=>{ prompt('Copia esto manualmente:', code); });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+
+<!-- LOGIN MODAL ADMINISTRADOR -->
+<div class="login-modal" id="login-modal">
+  <div class="login-box">
+    <div class="login-lock">🔐</div>
+    <h3>Área Privada</h3>
+    <p>Ingresa la contraseña de administrador</p>
+    <input type="password" id="login-input" placeholder="••••••••••••" autocomplete="off">
+    <p class="login-error" id="login-error">❌ Contraseña incorrecta. Inténtalo de nuevo.</p>
+    <button class="login-submit" onclick="submitAdminLogin()">Entrar al Panel</button>
+    <button class="login-cancel" onclick="closeLoginModal()">Cancelar</button>
+  </div>
+</div>
+
 </body>
 </html>
